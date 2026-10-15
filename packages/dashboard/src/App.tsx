@@ -262,29 +262,20 @@ export function App() {
               </button>
             </div>
 
-            {/* Authenticated User Block & Logout */}
             {/* Authenticated User Block */}
-            {currentUser && (
+            {currentUser && authMode !== 'none' && (
               <div className="header-user-block">
-                {authMode === 'none' ? (
-                  <span className="user-badge-tag" style={{ color: 'var(--drifter-mint)' }}>
-                    🔓 OPEN_LAN [ADMIN]
-                  </span>
-                ) : (
-                  <>
-                    <span className="user-badge-tag">
-                      👤 {currentUser.username.toUpperCase()} [{currentUser.role.toUpperCase()}]
-                    </span>
-                    <button
-                      type="button"
-                      className="font-btn logout-btn"
-                      onClick={handleLogout}
-                      title="LOGOUT"
-                    >
-                      {t.logoutBtn}
-                    </button>
-                  </>
-                )}
+                <span className="user-badge-tag">
+                  👤 {currentUser.username.toUpperCase()} [{currentUser.role.toUpperCase()}]
+                </span>
+                <button
+                  type="button"
+                  className="font-btn logout-btn"
+                  onClick={handleLogout}
+                  title="LOGOUT"
+                >
+                  {t.logoutBtn}
+                </button>
               </div>
             )}
           </div>
