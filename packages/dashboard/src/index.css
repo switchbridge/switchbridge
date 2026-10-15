@@ -115,7 +115,58 @@ body {
   background-image: 
     radial-gradient(circle at 15% 15%, var(--radial-glow-1) 0%, transparent 45%),
     radial-gradient(circle at 85% 85%, var(--radial-glow-2) 0%, transparent 45%);
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: 
+    background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global smooth transition for colors, cards, and borders */
+body,
+.sidebar,
+.stat-card,
+.section-card,
+.customizer-bar,
+.nav-item,
+.font-btn,
+.theme-btn,
+.logo,
+.header-title h1,
+.header-title p,
+.stat-value,
+.stat-label,
+.section-header h2,
+.table th,
+.table td,
+.live-feed-box {
+  transition: 
+    background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    letter-spacing 0.25s ease;
+}
+
+/* Typography smooth morphing */
+.font-morphing .header-title,
+.font-morphing .stat-card,
+.font-morphing .section-card,
+.font-morphing .sidebar,
+.font-morphing .customizer-bar {
+  animation: typographyMorph 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes typographyMorph {
+  0% {
+    opacity: 0.65;
+    filter: blur(0.7px);
+    transform: scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
 }
 
 .dashboard-container {
@@ -130,7 +181,6 @@ body {
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .logo {

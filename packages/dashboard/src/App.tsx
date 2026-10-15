@@ -22,9 +22,15 @@ export function App() {
     'WebSocket stream listening on /ws/feed.',
   ]);
 
+  const [isFontMorphing, setIsFontMorphing] = useState(false);
+
   useEffect(() => {
     document.documentElement.setAttribute('data-font', font);
     localStorage.setItem('sb_font', font);
+
+    setIsFontMorphing(true);
+    const timer = setTimeout(() => setIsFontMorphing(false), 320);
+    return () => clearTimeout(timer);
   }, [font]);
 
   useEffect(() => {
@@ -42,7 +48,7 @@ export function App() {
   }, []);
 
   return (
-    <div className="dashboard-container">
+    <div className={`dashboard-container ${isFontMorphing ? 'font-morphing' : ''}`}>
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="logo">
