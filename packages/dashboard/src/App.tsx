@@ -12,6 +12,14 @@ export function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('sb_pixel_theme') as any) || 'dark';
   });
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
+    const saved = localStorage.getItem('sb_sidebar_open');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sb_sidebar_open', String(sidebarOpen));
+  }, [sidebarOpen]);
 
   const [logs] = useState<string[]>([
     'CORE_BOOT :: OK [WAL_MODE_ENABLED]',
@@ -37,10 +45,18 @@ export function App() {
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
         <div className="logo">
           <div className="logo-badge">⚡</div>
           <span className="logo-text">SWITCHBRIDGE</span>
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={() => setSidebarOpen(false)}
+            title="COLLAPSE SIDEBAR"
+          >
+            ◄
+          </button>
         </div>
 
         <ul className="nav-links">
@@ -74,9 +90,20 @@ export function App() {
       {/* Main Content */}
       <main className="main-content">
         <header className="header">
-          <div className="header-title">
-            <h1>/// ENGINE OVERVIEW_</h1>
-            <p>OMNICHANNEL_MESSAGE_ROUTER // NODE_STATUS: 200_OK</p>
+          <div className="header-left-group">
+            <button
+              type="button"
+              className="hamburger-btn"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              title={sidebarOpen ? "COLLAPSE MENU" : "EXPAND MENU"}
+            >
+              <span className="hamburger-icon">☰</span>
+              <span>MENU</span>
+            </button>
+            <div className="header-title">
+              <h1>/// ENGINE OVERVIEW_</h1>
+              <p>OMNICHANNEL_MESSAGE_ROUTER // NODE_STATUS: 200_OK</p>
+            </div>
           </div>
 
           <div className="header-actions">
