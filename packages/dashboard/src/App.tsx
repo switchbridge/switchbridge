@@ -186,26 +186,28 @@ export function App() {
             <h2>[ CONFIGURED_BRIDGE_LINKS ]</h2>
             <span className="stat-slot">TABLE_01</span>
           </div>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>BRIDGE_ID</th>
-                <th>PLATFORMS</th>
-                <th>ENDPOINTS</th>
-                <th>STATUS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>TELEGRAM_SUPPORT &lt;--&gt; DISCORD_HELP</td>
-                <td>TELEGRAM, DISCORD</td>
-                <td>2_ENDPOINTS</td>
-                <td>
-                  <span className="status-badge-pixel">ONLINE</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>BRIDGE_ID</th>
+                  <th>PLATFORMS</th>
+                  <th>ENDPOINTS</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TELEGRAM_SUPPORT &lt;--&gt; DISCORD_HELP</td>
+                  <td>TELEGRAM, DISCORD</td>
+                  <td>2_ENDPOINTS</td>
+                  <td>
+                    <span className="status-badge-pixel">ONLINE</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
       </main>
     </div>
