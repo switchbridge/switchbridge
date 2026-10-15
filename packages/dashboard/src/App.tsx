@@ -147,10 +147,6 @@ export function App() {
               </div>
             </div>
 
-            <div className="badge-status">
-              <span className="pulse-dot"></span>
-              System Online
-            </div>
           </div>
         </header>
 
