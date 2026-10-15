@@ -208,6 +208,51 @@ export function App() {
             {t.navRerunSetup}
           </li>
         </ul>
+
+        {/* Sidebar Customizers: Language & Theme */}
+        <div className="sidebar-customizers">
+          {/* Language Switcher */}
+          <div className="customizer-bar">
+            <span className="customizer-label">{t.langLabel}</span>
+            <div className="customizer-buttons">
+              <button
+                type="button"
+                className={`font-btn ${lang === 'ru' ? 'active' : ''}`}
+                onClick={() => setLang('ru')}
+              >
+                RU
+              </button>
+              <button
+                type="button"
+                className={`font-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => setLang('en')}
+              >
+                EN
+              </button>
+            </div>
+          </div>
+
+          {/* Theme Switcher */}
+          <div className="customizer-bar">
+            <span className="customizer-label">{t.themeLabel}</span>
+            <div className="customizer-buttons">
+              <button
+                type="button"
+                className={`font-btn ${theme === 'dark' ? 'active' : ''}`}
+                onClick={() => setTheme('dark')}
+              >
+                {t.themeNight}
+              </button>
+              <button
+                type="button"
+                className={`font-btn ${theme === 'light' ? 'active' : ''}`}
+                onClick={() => setTheme('light')}
+              >
+                {t.themeDay}
+              </button>
+            </div>
+          </div>
+        </div>
       </aside>
 
       {/* Main Content */}
@@ -224,44 +269,6 @@ export function App() {
           </button>
 
           <div className="header-actions">
-            {/* Language Switcher */}
-            <div className="customizer-bar">
-              <span className="customizer-label">{t.langLabel}</span>
-              <button
-                type="button"
-                className={`font-btn ${lang === 'ru' ? 'active' : ''}`}
-                onClick={() => setLang('ru')}
-              >
-                RU
-              </button>
-              <button
-                type="button"
-                className={`font-btn ${lang === 'en' ? 'active' : ''}`}
-                onClick={() => setLang('en')}
-              >
-                EN
-              </button>
-            </div>
-
-            {/* Theme Switcher */}
-            <div className="customizer-bar">
-              <span className="customizer-label">{t.themeLabel}</span>
-              <button
-                type="button"
-                className={`font-btn ${theme === 'dark' ? 'active' : ''}`}
-                onClick={() => setTheme('dark')}
-              >
-                {t.themeNight}
-              </button>
-              <button
-                type="button"
-                className={`font-btn ${theme === 'light' ? 'active' : ''}`}
-                onClick={() => setTheme('light')}
-              >
-                {t.themeDay}
-              </button>
-            </div>
-
             {/* Authenticated User Block */}
             {currentUser && authMode !== 'none' && (
               <div className="header-user-block">
