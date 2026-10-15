@@ -121,10 +121,6 @@ export function App() {
                 ☀️ DAY
               </button>
             </div>
-
-            <div className="keycap-badge">
-              LIVE_STAND
-            </div>
           </div>
         </header>
 
