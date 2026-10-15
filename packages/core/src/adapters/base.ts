@@ -1,13 +1,13 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'node:events';
 import { OutboundMessage, PlatformType, UnifiedMessage } from '../types/message.js';
 
 export interface AdapterEvents {
-  'message': (message: UnifiedMessage) => void;
-  'error': (error: Error) => void;
-  'ready': () => void;
+  message: [message: UnifiedMessage];
+  error: [error: Error];
+  ready: [];
 }
 
-export abstract class BaseAdapter extends EventEmitter<AdapterEvents> {
+export abstract class BaseAdapter extends EventEmitter {
   public abstract readonly platform: PlatformType;
   public abstract readonly name: string;
 

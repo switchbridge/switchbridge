@@ -16,7 +16,7 @@ export function App() {
   ]);
 
   useEffect(() => {
-    fetch('/api/stats')
+    fetch(`${import.meta.env.BASE_URL}api/stats`)
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch(() => {

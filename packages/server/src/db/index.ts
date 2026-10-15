@@ -13,5 +13,47 @@ const sqlite = new Database(path.join(dbDir, 'switchbridge.sqlite'));
 // Enable WAL mode for high concurrent throughput
 sqlite.pragma('journal_mode = WAL');
 
+// Automatic schema provisioning on startup
+sqlite.exec(`
+  CREATE TABLE IF NOT EXISTS channels (
+    id TEXT PRIMARY KEY,
+    platform TEXT NOT NULL,
+    channel_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    status TEXT DEFAULT 'active',
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS bridges (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    enabled INTEGER DEFAULT 1,
+    endpoints_json TEXT NOT NULL,
+    options_json TEXT,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS contacts (
+    id TEXT PRIMARY KEY,
+    display_name TEXT,
+    email TEXT,
+    phone TEXT,
+    tags_json TEXT DEFAULT '[]',
+    identities_json TEXT DEFAULT '[]',
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS message_logs (
+    id TEXT PRIMARY KEY,
+    platform TEXT NOT NULL,
+    channel_id TEXT NOT NULL,
+    author_name TEXT NOT NULL,
+    text TEXT NOT NULL,
+    forwarded_to TEXT,
+    timestamp INTEGER NOT NULL
+  );
+`);
+
 export const db = drizzle(sqlite, { schema });
 export { schema };

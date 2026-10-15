@@ -28,7 +28,7 @@ export class BridgeEngine {
 
   public registerAdapter(adapter: BaseAdapter): void {
     this.adapters.set(adapter.platform, adapter);
-    adapter.on('message', (msg) => this.handleIncomingMessage(msg));
+    adapter.on('message', (msg: UnifiedMessage) => this.handleIncomingMessage(msg));
   }
 
   public addBridgeLink(link: BridgeLink): void {

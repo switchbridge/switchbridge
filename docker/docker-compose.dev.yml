@@ -1,0 +1,59 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: switchbridge-dev-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: switchbridge-dev-server
+    restart: unless-stopped
+    working_dir: /app/packages/server
+    command: npx tsx watch --include ../core/src src/index.ts
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - DATA_DIR=/app/.data
+      - REDIS_URL=redis://redis:6379
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ..:/app
+    depends_on:
+      - redis
+    networks:
+      - default
+      - homelab-edge
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    container_name: switchbridge-dev-dashboard
+    restart: unless-stopped
+    working_dir: /app/packages/dashboard
+    command: npx vite --host 0.0.0.0 --port 5173
+    environment:
+      - VITE_API_TARGET=http://server:3000
+      - VITE_WS_TARGET=ws://server:3000
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "5173:5173"
+    volumes:
+      - ..:/app
+    depends_on:
+      - server
+    networks:
+      - default
+      - homelab-edge
+
+networks:
+  default:
+  homelab-edge:
+    name: homelab-edge
+    external: true
