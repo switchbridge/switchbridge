@@ -12,8 +12,8 @@ export function App() {
   const [font, setFont] = useState<'roboto' | 'inter' | 'outfit' | 'hacker'>(() => {
     return (localStorage.getItem('sb_font') as any) || 'roboto';
   });
-  const [theme, setTheme] = useState<'cyber-cyan' | 'slate-dark' | 'emerald-matrix' | 'sunset-glow'>(() => {
-    return (localStorage.getItem('sb_theme') as any) || 'cyber-cyan';
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('sb_theme') as any) || 'dark';
   });
 
   const [logs] = useState<string[]>([
@@ -123,35 +123,23 @@ export function App() {
                 </button>
               </div>
 
-              <div className="theme-dots">
+              <div className="theme-toggle-group">
                 <button
                   type="button"
-                  className={`theme-dot ${theme === 'cyber-cyan' ? 'active' : ''}`}
-                  style={{ background: 'linear-gradient(135deg, #00e5ff, #8b5cf6)' }}
-                  onClick={() => setTheme('cyber-cyan')}
-                  title="Cyber Cyan Theme"
-                />
+                  className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
+                  onClick={() => setTheme('light')}
+                  title="Switch to Light Theme"
+                >
+                  ☀️ Light
+                </button>
                 <button
                   type="button"
-                  className={`theme-dot ${theme === 'slate-dark' ? 'active' : ''}`}
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #38bdf8)' }}
-                  onClick={() => setTheme('slate-dark')}
-                  title="Slate Dark Theme"
-                />
-                <button
-                  type="button"
-                  className={`theme-dot ${theme === 'emerald-matrix' ? 'active' : ''}`}
-                  style={{ background: 'linear-gradient(135deg, #10b981, #06b6d4)' }}
-                  onClick={() => setTheme('emerald-matrix')}
-                  title="Emerald Matrix Theme"
-                />
-                <button
-                  type="button"
-                  className={`theme-dot ${theme === 'sunset-glow' ? 'active' : ''}`}
-                  style={{ background: 'linear-gradient(135deg, #f43f5e, #fb923c)' }}
-                  onClick={() => setTheme('sunset-glow')}
-                  title="Sunset Glow Theme"
-                />
+                  className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+                  onClick={() => setTheme('dark')}
+                  title="Switch to Dark Theme"
+                >
+                  🌙 Dark
+                </button>
               </div>
             </div>
 
