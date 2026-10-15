@@ -4,7 +4,8 @@ import websocket from '@fastify/websocket';
 import { db, schema } from './db/index.js';
 import { BridgeEngine } from '@switchbridge/core';
 
-import { getSystemConfig, saveSystemConfig, hashPassword } from './config.js';
+import { getSystemConfig, saveSystemConfig, hashPassword, verifyPassword } from './config.js';
+import { createToken, verifyToken } from './auth.js';
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 
@@ -116,6 +117,104 @@ export async function createServer() {
   server.post('/api/setup/reset', async () => {
     saveSystemConfig({ initialized: false });
     return { success: true, message: 'System setup reset to uninitialized' };
+  });
+
+  // Authentication: Login
+  server.post('/api/auth/login', async (req, reply) => {
+    const body = req.body as { username?: string; password?: string };
+    if (!body || !body.username || !body.password) {
+      return reply.status(400).send({ error: 'USERNAME_AND_PASSWORD_REQUIRED' });
+    }
+
+    const username = body.username.trim();
+    const users = db.select().from(schema.users).where(eq(schema.users.username, username)).all();
+    const user = users[0];
+
+    if (!user || !user.passwordHash || !verifyPassword(body.password, user.passwordHash)) {
+      return reply.status(401).send({ error: 'INVALID_CREDENTIALS' });
+    }
+
+    const token = createToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    });
+
+    return {
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  });
+
+  // Authentication: Current User Status
+  server.get('/api/auth/me', async (req, reply) => {
+    const config = getSystemConfig();
+    
+    // If auth mode is 'none', grant immediate admin rights without login
+    if (config.auth.mode === 'none') {
+      return {
+        authenticated: true,
+        authMode: 'none',
+        user: {
+          id: 'open-lan-admin',
+          username: 'lan-user',
+          email: null,
+          role: 'admin',
+        },
+      };
+    }
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return reply.status(401).send({
+        authenticated: false,
+        authMode: config.auth.mode,
+        error: 'NO_TOKEN',
+      });
+    }
+
+    const token = authHeader.slice(7).trim();
+    const payload = verifyToken(token);
+    if (!payload) {
+      return reply.status(401).send({
+        authenticated: false,
+        authMode: config.auth.mode,
+        error: 'INVALID_OR_EXPIRED_TOKEN',
+      });
+    }
+
+    const users = db.select().from(schema.users).where(eq(schema.users.id, payload.userId)).all();
+    const user = users[0];
+    if (!user) {
+      return reply.status(401).send({
+        authenticated: false,
+        authMode: config.auth.mode,
+        error: 'USER_NOT_FOUND',
+      });
+    }
+
+    return {
+      authenticated: true,
+      authMode: config.auth.mode,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  });
+
+  // Authentication: Logout
+  server.post('/api/auth/logout', async () => {
+    return { success: true };
   });
 
   // Health check

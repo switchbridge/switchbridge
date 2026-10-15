@@ -42,6 +42,20 @@ export const translations = {
     errOidcRequired: 'ПОЖАЛУЙСТА, УКАЖИТЕ ISSUER URL И CLIENT ID',
     errNetwork: 'ОШИБКА СЕТИ ИЛИ СЕРВЕРА',
 
+    // Login Screen
+    loginBadge: '⚡ АВТОРИЗАЦИЯ // RBAC_GATEWAY',
+    loginTitle: 'ВХОД В СИСТЕМУ',
+    loginDescription: 'Введите учетные данные для доступа к панели управления Switchbridge.',
+    loginUsernameLabel: 'ИМЯ_ПОЛЬЗОВАТЕЛЯ',
+    loginUsernamePlaceholder: 'admin',
+    loginPasswordLabel: 'ПАРОЛЬ',
+    loginPasswordPlaceholder: '••••••••',
+    loginSubmitBtn: 'ВОЙТИ В СИСТЕМУ ►',
+    loginSubmitting: 'ПРОВЕРКА...',
+    loginErrRequired: 'ВВЕДИТЕ ЛОГИН И ПАРОЛЬ',
+    loginErrFailed: 'НЕВЕРНЫЙ ЛОГИН ИЛИ ПАРОЛЬ',
+    logoutBtn: 'ВЫХОД',
+
     // Intel modal
     intelModalTitle: '',
     intelCapabilities: '[ КЛЮЧЕВЫЕ_ВОЗМОЖНОСТИ ]',
@@ -152,6 +166,20 @@ export const translations = {
     errPasswordMismatch: 'PASSWORDS DO NOT MATCH',
     errOidcRequired: 'PLEASE ENTER OIDC ISSUER URL AND CLIENT ID',
     errNetwork: 'NETWORK OR SERVER ERROR OCCURRED',
+
+    // Login Screen
+    loginBadge: '⚡ AUTHENTICATION // RBAC_GATEWAY',
+    loginTitle: 'SYSTEM LOGIN',
+    loginDescription: 'Enter your credentials to access the Switchbridge dashboard.',
+    loginUsernameLabel: 'USERNAME',
+    loginUsernamePlaceholder: 'admin',
+    loginPasswordLabel: 'PASSWORD',
+    loginPasswordPlaceholder: '••••••••',
+    loginSubmitBtn: 'AUTHENTICATE ►',
+    loginSubmitting: 'VERIFYING...',
+    loginErrRequired: 'ENTER USERNAME AND PASSWORD',
+    loginErrFailed: 'INVALID USERNAME OR PASSWORD',
+    logoutBtn: 'LOGOUT',
 
     // Intel modal
     intelModalTitle: '',

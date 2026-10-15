@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SetupWizard } from './SetupWizard';
+import { LoginScreen, User } from './LoginScreen';
 import { translations, Lang } from './i18n';
 
 interface Stats {
@@ -29,6 +30,8 @@ export function App() {
     return saved !== null ? saved === 'true' : true;
   });
   const [isInitialized, setIsInitialized] = useState<boolean | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
     localStorage.setItem('sb_sidebar_open', String(sidebarOpen));
@@ -58,18 +61,55 @@ export function App() {
       });
   };
 
+  const checkAuth = async () => {
+    setAuthLoading(true);
+    try {
+      const token = localStorage.getItem('sb_auth_token');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${import.meta.env.BASE_URL}api/auth/me`, { headers });
+      const data = await res.json();
+      if (res.ok && data.authenticated) {
+        setCurrentUser(data.user);
+      } else {
+        setCurrentUser(null);
+      }
+    } catch {
+      setCurrentUser(null);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   useEffect(() => {
     checkSetupStatus();
   }, []);
 
   useEffect(() => {
     if (isInitialized) {
+      checkAuth();
+    }
+  }, [isInitialized]);
+
+  useEffect(() => {
+    if (isInitialized && currentUser) {
       fetch(`${import.meta.env.BASE_URL}api/stats`)
         .then((res) => res.json())
         .then((data) => setStats(data))
         .catch(() => {});
     }
-  }, [isInitialized]);
+  }, [isInitialized, currentUser]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${import.meta.env.BASE_URL}api/auth/logout`, { method: 'POST' });
+    } catch {}
+    localStorage.removeItem('sb_auth_token');
+    setCurrentUser(null);
+  };
 
   const handleNavClick = (tab: 'overview' | 'bridges' | 'channels' | 'contacts') => {
     setActiveTab(tab);
@@ -84,7 +124,7 @@ export function App() {
   }
 
   // Brief loading placeholder while checking status
-  if (isInitialized === null) {
+  if (isInitialized === null || authLoading) {
     return (
       <div className="setup-container">
         <div style={{ color: 'var(--drifter-cyan)', fontFamily: 'var(--font-pixel)', fontSize: '0.8rem' }}>
@@ -92,6 +132,11 @@ export function App() {
         </div>
       </div>
     );
+  }
+
+  // If system is initialized but user has not logged in, show Login Screen
+  if (!currentUser) {
+    return <LoginScreen onLoginSuccess={(user) => setCurrentUser(user)} />;
   }
 
   return (
@@ -210,6 +255,23 @@ export function App() {
                 {t.themeDay}
               </button>
             </div>
+
+            {/* Authenticated User Block & Logout */}
+            {currentUser && (
+              <div className="header-user-block">
+                <span className="user-badge-tag">
+                  👤 {currentUser.username.toUpperCase()} [{currentUser.role.toUpperCase()}]
+                </span>
+                <button
+                  type="button"
+                  className="font-btn logout-btn"
+                  onClick={handleLogout}
+                  title="LOGOUT"
+                >
+                  {t.logoutBtn}
+                </button>
+              </div>
+            )}
           </div>
         </header>
 

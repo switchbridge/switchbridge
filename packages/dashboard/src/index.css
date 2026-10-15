@@ -348,6 +348,34 @@ body,
   box-shadow: 3px 3px 0px var(--box-shadow-color);
 }
 
+.header-user-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--drifter-card);
+  border: 2px solid var(--drifter-cyan);
+  padding: 6px 12px;
+  box-shadow: 3px 3px 0px var(--box-shadow-color);
+}
+
+.user-badge-tag {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--drifter-cyan);
+  letter-spacing: 0.5px;
+}
+
+.logout-btn {
+  border-color: var(--drifter-pink) !important;
+  color: var(--drifter-pink) !important;
+}
+
+.logout-btn:hover {
+  background: var(--drifter-pink) !important;
+  color: #ffffff !important;
+}
+
 .customizer-label {
   font-size: 0.62rem;
   font-weight: 700;
