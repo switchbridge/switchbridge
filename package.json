@@ -1,0 +1,32 @@
+{
+  "name": "switchbridge-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source omnichannel messaging and bridge engine with deep n8n integration",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run --workspaces --if-present build",
+    "test": "npm run --workspaces --if-present test",
+    "lint": "npm run --workspaces --if-present lint"
+  },
+  "keywords": [
+    "omnichannel",
+    "messaging",
+    "bot",
+    "telegram",
+    "discord",
+    "slack",
+    "whatsapp",
+    "n8n",
+    "bridge",
+    "automation"
+  ],
+  "author": "Switchbridge Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
+  }
+}

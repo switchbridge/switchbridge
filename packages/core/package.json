@@ -1,0 +1,19 @@
+{
+  "name": "@switchbridge/core",
+  "version": "0.1.0",
+  "description": "Core routing, unified message model, and bridge engine for Switchbridge",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
+  }
+}
