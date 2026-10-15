@@ -9,34 +9,21 @@ interface Stats {
 export function App() {
   const [stats, setStats] = useState<Stats>({ bridgesCount: 0, channelsCount: 0, contactsCount: 0 });
   const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts'>('overview');
-  const [font, setFont] = useState<'roboto' | 'inter' | 'outfit' | 'hacker'>(() => {
-    return (localStorage.getItem('sb_font') as any) || 'roboto';
-  });
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return (localStorage.getItem('sb_theme') as any) || 'dark';
-  });
+  const [pixelFont, setPixelFont] = useState<'silkscreen' | 'arcade' | 'vt323'>('silkscreen');
 
   const [logs] = useState<string[]>([
-    'Switchbridge Core initialized.',
-    'SQLite storage engine ready (WAL mode).',
-    'WebSocket stream listening on /ws/feed.',
+    'CORE_BOOT :: OK [WAL_MODE_ENABLED]',
+    'SQLITE_STORAGE :: /app/.data/switchbridge.sqlite',
+    'WEBSOCKET_STREAM :: LISTENING_FEED_PORT_3000',
+    'CADDY_EDGE_REVERSE_PROXY :: /switchbridge ACTIVE',
   ]);
 
-  const [isFontMorphing, setIsFontMorphing] = useState(false);
-
   useEffect(() => {
-    document.documentElement.setAttribute('data-font', font);
-    localStorage.setItem('sb_font', font);
-
-    setIsFontMorphing(true);
-    const timer = setTimeout(() => setIsFontMorphing(false), 320);
-    return () => clearTimeout(timer);
-  }, [font]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('sb_theme', theme);
-  }, [theme]);
+    let fontVal = "'Silkscreen', monospace";
+    if (pixelFont === 'arcade') fontVal = "'Press Start 2P', monospace";
+    if (pixelFont === 'vt323') fontVal = "'VT323', monospace";
+    document.documentElement.style.setProperty('--font-pixel', fontVal);
+  }, [pixelFont]);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}api/stats`)
@@ -48,135 +35,145 @@ export function App() {
   }, []);
 
   return (
-    <div className={`dashboard-container ${isFontMorphing ? 'font-morphing' : ''}`}>
+    <div className="dashboard-container">
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="logo">
           <div className="logo-badge">⚡</div>
-          <span>Switchbridge</span>
+          <span className="logo-text">SWITCHBRIDGE</span>
         </div>
+
         <ul className="nav-links">
           <li 
             className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveTab('overview')}
           >
-            📊 Overview
+            01 // OVERVIEW
           </li>
           <li 
             className={`nav-item ${activeTab === 'bridges' ? 'active' : ''}`}
             onClick={() => setActiveTab('bridges')}
           >
-            🔄 Bridges
+            02 // BRIDGES
           </li>
           <li 
             className={`nav-item ${activeTab === 'channels' ? 'active' : ''}`}
             onClick={() => setActiveTab('channels')}
           >
-            💬 Channels
+            03 // CHANNELS
           </li>
           <li 
             className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
             onClick={() => setActiveTab('contacts')}
           >
-            👥 Contacts
+            04 // CONTACTS
           </li>
         </ul>
+
+        {/* Wireframe HUD box (Hyper Light Drifter reference) */}
+        <div className="wireframe-box">
+          <div className="wireframe-title">
+            <span>SYS_TOPOLOGY</span>
+            <span className="keycap-badge">2D_MAP</span>
+          </div>
+          <svg className="wireframe-canvas" viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Grid background */}
+            <rect x="10" y="10" width="180" height="70" stroke="#36224e" strokeWidth="1" strokeDasharray="4 2" />
+            {/* Nodes */}
+            <rect x="25" y="25" width="40" height="20" stroke="#ff0077" strokeWidth="2" fill="#08040d" />
+            <text x="45" y="38" fill="#ffffff" fontSize="8" fontFamily="monospace" textAnchor="middle">TG_BOT</text>
+
+            <rect x="135" y="25" width="40" height="20" stroke="#00f0ff" strokeWidth="2" fill="#08040d" />
+            <text x="155" y="38" fill="#ffffff" fontSize="8" fontFamily="monospace" textAnchor="middle">DC_SRV</text>
+
+            <rect x="80" y="55" width="40" height="20" stroke="#38ef7d" strokeWidth="2" fill="#08040d" />
+            <text x="100" y="68" fill="#ffffff" fontSize="8" fontFamily="monospace" textAnchor="middle">N8N_HUB</text>
+
+            {/* Connecting lines */}
+            <line x1="65" y1="35" x2="135" y2="35" stroke="#ff0077" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="45" y1="45" x2="80" y2="65" stroke="#38ef7d" strokeWidth="1.5" />
+            <line x1="155" y1="45" x2="120" y2="65" stroke="#00f0ff" strokeWidth="1.5" />
+          </svg>
+        </div>
       </aside>
 
       {/* Main Content */}
       <main className="main-content">
         <header className="header">
           <div className="header-title">
-            <h1>Engine Overview</h1>
-            <p>Standalone omnichannel orchestration dashboard</p>
+            <h1>/// ENGINE OVERVIEW_</h1>
+            <p>OMNICHANNEL_MESSAGE_ROUTER // NODE_STATUS: 200_OK</p>
           </div>
 
           <div className="header-actions">
             <div className="customizer-bar">
-              <div className="customizer-group">
-                <span className="customizer-label">Font:</span>
-                <button
-                  type="button"
-                  className={`font-btn ${font === 'roboto' ? 'active' : ''}`}
-                  onClick={() => setFont('roboto')}
-                  title="Google Roboto font"
-                >
-                  Roboto
-                </button>
-                <button
-                  type="button"
-                  className={`font-btn ${font === 'inter' ? 'active' : ''}`}
-                  onClick={() => setFont('inter')}
-                  title="Inter font"
-                >
-                  Inter
-                </button>
-                <button
-                  type="button"
-                  className={`font-btn ${font === 'outfit' ? 'active' : ''}`}
-                  onClick={() => setFont('outfit')}
-                  title="Outfit font"
-                >
-                  Outfit
-                </button>
-                <button
-                  type="button"
-                  className={`font-btn ${font === 'hacker' ? 'active' : ''}`}
-                  onClick={() => setFont('hacker')}
-                  title="Share Tech Mono / Fira Code - Cyberpunk Terminal Font"
-                >
-                  💻 Hacker Mono
-                </button>
-              </div>
-
-              <div className="theme-toggle-group">
-                <button
-                  type="button"
-                  className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
-                  onClick={() => setTheme('light')}
-                  title="Switch to Light Theme"
-                >
-                  ☀️ Light
-                </button>
-                <button
-                  type="button"
-                  className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
-                  onClick={() => setTheme('dark')}
-                  title="Switch to Dark Theme"
-                >
-                  🌙 Dark
-                </button>
-              </div>
+              <span className="customizer-label">FONT:</span>
+              <button
+                type="button"
+                className={`font-btn ${pixelFont === 'silkscreen' ? 'active' : ''}`}
+                onClick={() => setPixelFont('silkscreen')}
+              >
+                SILKSCREEN
+              </button>
+              <button
+                type="button"
+                className={`font-btn ${pixelFont === 'arcade' ? 'active' : ''}`}
+                onClick={() => setPixelFont('arcade')}
+              >
+                8-BIT
+              </button>
+              <button
+                type="button"
+                className={`font-btn ${pixelFont === 'vt323' ? 'active' : ''}`}
+                onClick={() => setPixelFont('vt323')}
+              >
+                VT323
+              </button>
             </div>
 
+            <div className="keycap-badge">
+              LIVE_STAND
+            </div>
           </div>
         </header>
 
         {/* Stats Grid */}
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-label">Active Bridges</div>
+            <div className="stat-header-row">
+              <span className="stat-label">ACTIVE_BRIDGES</span>
+              <span className="stat-slot">SLOT_01</span>
+            </div>
             <div className="stat-value">{stats.bridgesCount}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">Connected Channels</div>
+            <div className="stat-header-row">
+              <span className="stat-label">CONNECTED_CHANNELS</span>
+              <span className="stat-slot">SLOT_02</span>
+            </div>
             <div className="stat-value">{stats.channelsCount}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">Unified Contacts</div>
+            <div className="stat-header-row">
+              <span className="stat-label">UNIFIED_CONTACTS</span>
+              <span className="stat-slot">SLOT_03</span>
+            </div>
             <div className="stat-value">{stats.contactsCount}</div>
           </div>
         </div>
 
-        {/* Live Message Stream */}
+        {/* Live Event Stream */}
         <section className="section-card">
           <div className="section-header">
-            <h2>Live Event Stream</h2>
+            <h2>[ EVENT_FEED_STREAM ]</h2>
+            <span className="stat-slot">SYS_LOG_V1</span>
           </div>
           <div className="live-feed-box">
             {logs.map((log, index) => (
-              <div key={index} style={{ marginBottom: '6px' }}>
-                <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>[{new Date().toLocaleTimeString()}]</span> {log}
+              <div key={index} className="feed-line">
+                <span className="feed-prompt">&gt;</span>
+                <span className="feed-time">[{new Date().toLocaleTimeString()}]</span>
+                <span>{log}</span>
               </div>
             ))}
           </div>
@@ -185,23 +182,26 @@ export function App() {
         {/* Bridges Table Preview */}
         <section className="section-card">
           <div className="section-header">
-            <h2>Configured Bridge Links</h2>
+            <h2>[ CONFIGURED_BRIDGE_LINKS ]</h2>
+            <span className="stat-slot">TABLE_01</span>
           </div>
           <table className="table">
             <thead>
               <tr>
-                <th>Bridge Name</th>
-                <th>Platforms</th>
-                <th>Endpoints</th>
-                <th>Status</th>
+                <th>BRIDGE_ID</th>
+                <th>PLATFORMS</th>
+                <th>ENDPOINTS</th>
+                <th>STATUS</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Telegram Support &lt;-&gt; Discord #help</td>
-                <td>Telegram, Discord</td>
-                <td>2 endpoints</td>
-                <td><span style={{ color: 'var(--success)' }}>Active</span></td>
+                <td>TELEGRAM_SUPPORT &lt;--&gt; DISCORD_HELP</td>
+                <td>TELEGRAM, DISCORD</td>
+                <td>2_ENDPOINTS</td>
+                <td>
+                  <span className="status-badge-pixel">ONLINE</span>
+                </td>
               </tr>
             </tbody>
           </table>
