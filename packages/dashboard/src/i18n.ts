@@ -41,15 +41,15 @@ export const translations = {
     errNetwork: 'ОШИБКА СЕТИ ИЛИ СЕРВЕРА',
 
     // Intel modal
-    intelModalTitle: 'ИНФОРМАЦИОННАЯ_СПРАВКА //',
+    intelModalTitle: '',
     intelCapabilities: '[ КЛЮЧЕВЫЕ_ВОЗМОЖНОСТИ ]',
     intelRecommendedCase: 'РЕКОМЕНДУЕМЫЙ СЦЕНАРИЙ:',
-    intelCloseBtn: 'ПОНЯТНО [ЗАКРЫТЬ]',
+    intelCloseBtn: '[ЗАКРЫТЬ]',
 
     // Intel Data
     intel: {
       builtin: {
-        title: '01 // ВСТРОЕННЫЙ ЛОКАЛЬНЫЙ RBAC',
+        title: 'ВСТРОЕННЫЙ ЛОКАЛЬНЫЙ RBAC',
         badge: 'РЕКОМЕНДУЕТСЯ (STANDALONE)',
         summary: 'Автономная система учетных записей и ролей, встроенная прямо в локальную базу данных (SQLite) без сторонних сервисов.',
         bullets: [
@@ -61,7 +61,7 @@ export const translations = {
         bestFor: 'Команды, продакшн-инсталляции и любые сценарии, где нужна надежная защита и разграничение прав.',
       },
       none: {
-        title: '02 // БЕЗ АВТОРИЗАЦИИ (ОТКРЫТЫЙ ДОСТУП)',
+        title: 'БЕЗ АВТОРИЗАЦИИ (ОТКРЫТЫЙ ДОСТУП)',
         badge: 'ZERO_CONFIG',
         summary: 'Полное отключение проверки авторизации. Любой пользователь в сети сразу получает права администратора.',
         bullets: [
@@ -72,7 +72,7 @@ export const translations = {
         bestFor: 'Локальная разработка, личные хоумлабы или когда авторизация уже вынесена на внешний Reverse Proxy.',
       },
       oidc: {
-        title: '03 // КОРПОРАТИВНЫЙ SSO (OPENID CONNECT)',
+        title: 'КОРПОРАТИВНЫЙ SSO (OPENID CONNECT)',
         badge: 'ENTERPRISE IDENTITY',
         summary: 'Делегирование аутентификации во внешнюю корпоративную систему единого входа по протоколу OpenID Connect.',
         bullets: [
@@ -150,15 +150,15 @@ export const translations = {
     errNetwork: 'NETWORK OR SERVER ERROR OCCURRED',
 
     // Intel modal
-    intelModalTitle: 'INTEL_BRIEFING //',
+    intelModalTitle: '',
     intelCapabilities: '[ KEY_CAPABILITIES ]',
     intelRecommendedCase: 'RECOMMENDED USE CASE:',
-    intelCloseBtn: 'GOT_IT [CLOSE]',
+    intelCloseBtn: '[CLOSE]',
 
     // Intel Data
     intel: {
       builtin: {
-        title: '01 // BUILTIN LOCAL RBAC',
+        title: 'BUILTIN LOCAL RBAC',
         badge: 'RECOMMENDED (STANDALONE)',
         summary: 'Standalone user and permission management stored directly in local database (SQLite) without external services.',
         bullets: [
@@ -170,7 +170,7 @@ export const translations = {
         bestFor: 'Teams, production deployments, and setups requiring granular role separation.',
       },
       none: {
-        title: '02 // NO AUTHENTICATION (OPEN ACCESS)',
+        title: 'NO AUTHENTICATION (OPEN ACCESS)',
         badge: 'ZERO_CONFIG',
         summary: 'Completely disables authorization checks. Anyone on the network gets immediate admin access.',
         bullets: [
@@ -181,7 +181,7 @@ export const translations = {
         bestFor: 'Local development, homelabs, or when auth is handled by an external Reverse Proxy.',
       },
       oidc: {
-        title: '03 // ENTERPRISE SSO (OPENID CONNECT)',
+        title: 'ENTERPRISE SSO (OPENID CONNECT)',
         badge: 'ENTERPRISE IDENTITY',
         summary: 'Delegates authentication to an external enterprise identity provider via OpenID Connect protocol.',
         bullets: [

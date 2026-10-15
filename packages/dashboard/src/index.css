@@ -1,8 +1,10 @@
 :root {
-  /* Permanent 8-BIT Retro Pixel Font */
+  /* Permanent 8-BIT Retro Pixel Font (HUD titles, buttons, badges, short codes) */
   --font-pixel: 'Press Start 2P', monospace;
+  /* Clean Monospace Font for extended reading, intel briefings, descriptions */
+  --font-readable: 'JetBrains Mono', monospace;
   --font-sans: var(--font-pixel);
-  --font-mono: var(--font-pixel);
+  --font-mono: var(--font-readable);
 
   /* Default Theme: Hyper Light Drifter (Dark) */
   --drifter-black: #08040d;
@@ -744,10 +746,15 @@ body,
 }
 
 .setup-description {
-  font-size: 0.65rem;
+  font-family: var(--font-readable);
+  font-size: 0.78rem;
+  font-weight: 400;
   color: var(--drifter-dim);
   margin-bottom: 20px;
   line-height: 1.6;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .wizard-option-card {
@@ -831,10 +838,15 @@ body,
 }
 
 .option-desc {
-  font-size: 0.6rem;
+  font-family: var(--font-readable);
+  font-size: 0.75rem;
+  font-weight: 400;
   color: var(--drifter-dim);
-  line-height: 1.6;
+  line-height: 1.5;
   margin-left: 28px;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Subform inputs inside selected option */
@@ -1097,10 +1109,15 @@ body,
 }
 
 .info-modal-summary {
-  font-size: 0.68rem;
+  font-family: var(--font-readable);
+  font-size: 0.82rem;
+  font-weight: 400;
   color: var(--drifter-white);
-  line-height: 1.8;
+  line-height: 1.65;
+  letter-spacing: 0;
   margin-bottom: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .info-modal-section-title {
@@ -1123,9 +1140,14 @@ body,
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.62rem;
+  font-family: var(--font-readable);
+  font-size: 0.76rem;
+  font-weight: 400;
   color: var(--drifter-dim);
-  line-height: 1.6;
+  line-height: 1.55;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .info-modal-bullet {
@@ -1154,9 +1176,14 @@ body,
 }
 
 .best-for-text {
-  font-size: 0.62rem;
+  font-family: var(--font-readable);
+  font-size: 0.76rem;
+  font-weight: 400;
   color: var(--drifter-white);
-  line-height: 1.5;
+  line-height: 1.55;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .info-modal-footer {
