@@ -42,8 +42,24 @@ export function App() {
       });
   }, []);
 
+  const handleNavClick = (tab: 'overview' | 'bridges' | 'channels' | 'contacts') => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined' && (window.innerWidth <= 900 || window.matchMedia('(orientation: portrait)').matches)) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="dashboard-container">
+      {/* Backdrop for portrait / mobile overlay */}
+      {sidebarOpen && (
+        <div 
+          className="sidebar-backdrop" 
+          onClick={() => setSidebarOpen(false)}
+          title="CLOSE SIDEBAR"
+        />
+      )}
+
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
         <div className="logo">
@@ -62,25 +78,25 @@ export function App() {
         <ul className="nav-links">
           <li 
             className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => setActiveTab('overview')}
+            onClick={() => handleNavClick('overview')}
           >
             01 // OVERVIEW
           </li>
           <li 
             className={`nav-item ${activeTab === 'bridges' ? 'active' : ''}`}
-            onClick={() => setActiveTab('bridges')}
+            onClick={() => handleNavClick('bridges')}
           >
             02 // BRIDGES
           </li>
           <li 
             className={`nav-item ${activeTab === 'channels' ? 'active' : ''}`}
-            onClick={() => setActiveTab('channels')}
+            onClick={() => handleNavClick('channels')}
           >
             03 // CHANNELS
           </li>
           <li 
             className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
-            onClick={() => setActiveTab('contacts')}
+            onClick={() => handleNavClick('contacts')}
           >
             04 // CONTACTS
           </li>
