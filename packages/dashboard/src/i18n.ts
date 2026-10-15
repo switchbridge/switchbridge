@@ -30,8 +30,8 @@ export const translations = {
     clientIdLabel: 'CLIENT_ID',
     clientSecretLabel: 'CLIENT_SECRET (ОПЦИОНАЛЬНО)',
 
-    submitSaving: 'СОХРАНЕНИЕ_КОНФИГУРАЦИИ...',
-    submitBtn: 'ПОДТВЕРДИТЬ_КОНФИГУРАЦИЮ_RBAC ►',
+    submitSaving: 'СОХРАНЕНИЕ...',
+    submitBtn: 'ПОДТВЕРДИТЬ ►',
 
     // Validation errors
     errEnterUsername: 'ПОЖАЛУЙСТА, УКАЖИТЕ ИМЯ АДМИНИСТРАТОРА',
@@ -140,8 +140,8 @@ export const translations = {
     clientIdLabel: 'CLIENT_ID',
     clientSecretLabel: 'CLIENT_SECRET (OPTIONAL)',
 
-    submitSaving: 'SAVING_CONFIG...',
-    submitBtn: 'CONFIRM_RBAC_CONFIGURATION ►',
+    submitSaving: 'SAVING...',
+    submitBtn: 'CONFIRM ►',
 
     // Validation errors
     errEnterUsername: 'PLEASE ENTER ADMIN USERNAME',
