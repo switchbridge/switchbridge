@@ -69,30 +69,6 @@ export function App() {
             04 // CONTACTS
           </li>
         </ul>
-
-        {/* Wireframe HUD box (Hyper Light Drifter reference) */}
-        <div className="wireframe-box">
-          <div className="wireframe-title">
-            <span>SYS_TOPOLOGY</span>
-            <span className="keycap-badge">2D_MAP</span>
-          </div>
-          <svg className="wireframe-canvas" viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="10" width="180" height="70" stroke="var(--drifter-border)" strokeWidth="1" strokeDasharray="4 2" />
-            
-            <rect x="25" y="25" width="40" height="20" stroke="var(--drifter-pink)" strokeWidth="2" fill="var(--drifter-card)" />
-            <text x="45" y="38" fill="var(--drifter-white)" fontSize="7" fontFamily="'Press Start 2P', monospace" textAnchor="middle">TG</text>
-
-            <rect x="135" y="25" width="40" height="20" stroke="var(--drifter-cyan)" strokeWidth="2" fill="var(--drifter-card)" />
-            <text x="155" y="38" fill="var(--drifter-white)" fontSize="7" fontFamily="'Press Start 2P', monospace" textAnchor="middle">DC</text>
-
-            <rect x="80" y="55" width="40" height="20" stroke="var(--drifter-mint)" strokeWidth="2" fill="var(--drifter-card)" />
-            <text x="100" y="68" fill="var(--drifter-white)" fontSize="7" fontFamily="'Press Start 2P', monospace" textAnchor="middle">N8N</text>
-
-            <line x1="65" y1="35" x2="135" y2="35" stroke="var(--drifter-pink)" strokeWidth="1.5" strokeDasharray="3 3" />
-            <line x1="45" y1="45" x2="80" y2="65" stroke="var(--drifter-mint)" strokeWidth="1.5" />
-            <line x1="155" y1="45" x2="120" y2="65" stroke="var(--drifter-cyan)" strokeWidth="1.5" />
-          </svg>
-        </div>
       </aside>
 
       {/* Main Content */}
