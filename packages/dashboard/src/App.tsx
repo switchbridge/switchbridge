@@ -9,7 +9,7 @@ interface Stats {
 export function App() {
   const [stats, setStats] = useState<Stats>({ bridgesCount: 0, channelsCount: 0, contactsCount: 0 });
   const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts'>('overview');
-  const [font, setFont] = useState<'roboto' | 'inter' | 'outfit'>(() => {
+  const [font, setFont] = useState<'roboto' | 'inter' | 'outfit' | 'hacker'>(() => {
     return (localStorage.getItem('sb_font') as any) || 'roboto';
   });
   const [theme, setTheme] = useState<'cyber-cyan' | 'slate-dark' | 'emerald-matrix' | 'sunset-glow'>(() => {
@@ -112,6 +112,14 @@ export function App() {
                   title="Outfit font"
                 >
                   Outfit
+                </button>
+                <button
+                  type="button"
+                  className={`font-btn ${font === 'hacker' ? 'active' : ''}`}
+                  onClick={() => setFont('hacker')}
+                  title="Share Tech Mono / Fira Code - Cyberpunk Terminal Font"
+                >
+                  💻 Hacker Mono
                 </button>
               </div>
 
