@@ -858,9 +858,10 @@ body,
 .form-group label {
   display: block;
   font-size: 0.58rem;
-  color: var(--drifter-white);
+  color: #ffffff; /* Always crisp and readable on dark feed background */
   margin-bottom: 6px;
   text-transform: uppercase;
+  line-height: 1.4;
 }
 
 .form-group input {
@@ -884,6 +885,19 @@ body,
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  align-items: end;
+}
+
+.form-group-grid .form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.form-group-grid .form-group label {
+  margin-top: auto;
 }
 
 @media (max-width: 600px) {

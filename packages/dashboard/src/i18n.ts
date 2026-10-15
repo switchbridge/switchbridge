@@ -3,14 +3,14 @@ export type Lang = 'ru' | 'en';
 export const translations = {
   ru: {
     // Setup Wizard
-    setupBadge: '⚡ МАСТЕР_НАЧАЛЬНОЙ_УСТАНОВКИ 1/3',
-    setupTitle: 'УПРАВЛЕНИЕ_ДОСТУПОМ_',
-    setupDescription: 'ВЫБЕРИТЕ МОДЕЛЬ АУТЕНТИФИКАЦИИ И ПРАВ ДОСТУПА ДЛЯ ЭТОГО УЗЛА SWITCHBRIDGE:',
-    
+    setupBadge: '⚡ МАСТЕР_НАЧАЛЬНОЙ_УСТАНОВКИ',
+    setupTitle: 'УПРАВЛЕНИЕ_ДОСТУПОМ',
+    setupDescription: 'ВЫБЕРИТЕ МОДЕЛЬ АУТЕНТИФИКАЦИИ И ПРАВ ДОСТУПА',
+
     // Options
-    optionBuiltinTitle: '01 // ВСТРОЕННЫЙ_RBAC',
-    optionNoneTitle: '02 // БЕЗ_АВТОРИЗАЦИИ (ОТКРЫТЫЙ_ДОСТУП)',
-    optionOidcTitle: '03 // КОРПОРАТИВНЫЙ_SSO (OIDC)',
+    optionBuiltinTitle: 'ВСТРОЕННЫЙ_RBAC',
+    optionNoneTitle: 'БЕЗ_АВТОРИЗАЦИИ (ОТКРЫТЫЙ_ДОСТУП)',
+    optionOidcTitle: 'КОРПОРАТИВНЫЙ_SSO (OIDC)',
 
     badgeRecommended: 'РЕКОМЕНДУЕТСЯ',
     badgeZeroConfig: 'БЕЗ_ПАРОЛЕЙ',
@@ -20,8 +20,8 @@ export const translations = {
     subformAdminTitle: '[ СОЗДАНИЕ_УЧЕТНОЙ_ЗАПИСИ_ROOT_ADMIN ]',
     adminUsernameLabel: 'ИМЯ_АДМИНИСТРАТОРА',
     adminEmailLabel: 'EMAIL_АДМИНИСТРАТОРА',
-    adminPasswordLabel: 'ПАРОЛЬ_АДМИНИСТРАТОРА (ОТ 6 СИМВОЛОВ)',
-    confirmPasswordLabel: 'ПОДТВЕРЖДЕНИЕ_ПАРОЛЯ',
+    adminPasswordLabel: 'ПАРОЛЬ (ОТ 6 СИМВ.)',
+    confirmPasswordLabel: 'ПОДТВЕРЖДЕНИЕ ПАРОЛЯ',
     passwordPlaceholder: '••••••••',
 
     subformOidcTitle: '[ НАСТРОЙКИ_ПРОВАЙДЕРА_OIDC ]',
@@ -112,14 +112,14 @@ export const translations = {
   },
   en: {
     // Setup Wizard
-    setupBadge: '⚡ INITIAL_SETUP_WIZARD 1/3',
-    setupTitle: 'ACCESS_CONTROL_',
-    setupDescription: 'SELECT AUTHENTICATION & PERMISSION MODEL FOR THIS SWITCHBRIDGE NODE:',
-    
+    setupBadge: '⚡ INITIAL_SETUP_WIZARD',
+    setupTitle: 'ACCESS_CONTROL',
+    setupDescription: 'SELECT AUTHENTICATION & PERMISSION MODEL',
+
     // Options
-    optionBuiltinTitle: '01 // BUILTIN_LOCAL_RBAC',
-    optionNoneTitle: '02 // NO_AUTHENTICATION (OPEN_LAN)',
-    optionOidcTitle: '03 // ENTERPRISE_SSO (OIDC)',
+    optionBuiltinTitle: 'BUILTIN_LOCAL_RBAC',
+    optionNoneTitle: 'NO_AUTHENTICATION (OPEN_LAN)',
+    optionOidcTitle: 'ENTERPRISE_SSO (OIDC)',
 
     badgeRecommended: 'RECOMMENDED',
     badgeZeroConfig: 'ZERO_CONFIG',
@@ -129,8 +129,8 @@ export const translations = {
     subformAdminTitle: '[ CONFIGURE_ROOT_ADMIN_ACCOUNT ]',
     adminUsernameLabel: 'ADMIN_USERNAME',
     adminEmailLabel: 'ADMIN_EMAIL',
-    adminPasswordLabel: 'ADMIN_PASSWORD (MIN 6 CHARS)',
-    confirmPasswordLabel: 'CONFIRM_PASSWORD',
+    adminPasswordLabel: 'PASSWORD (MIN 6 CHARS)',
+    confirmPasswordLabel: 'CONFIRM PASSWORD',
     passwordPlaceholder: '••••••••',
 
     subformOidcTitle: '[ OIDC_PROVIDER_SETTINGS ]',
