@@ -166,7 +166,7 @@ body,
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
   padding: 8px 4px;
   border-bottom: 2px solid var(--drifter-border);
 }
@@ -191,6 +191,16 @@ body,
   letter-spacing: 1px;
 }
 
+/* Sidebar Customizers (Language & Theme Switchers at top) */
+.sidebar-customizers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px dashed var(--drifter-border);
+}
+
 /* Drifter Menu / Navigation */
 .nav-links {
   list-style: none;
@@ -198,16 +208,6 @@ body,
   flex-direction: column;
   gap: 10px;
   flex: 1;
-}
-
-/* Sidebar Customizers (Language & Theme Switchers) */
-.sidebar-customizers {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 2px dashed var(--drifter-border);
 }
 
 .sidebar-customizers .customizer-bar {

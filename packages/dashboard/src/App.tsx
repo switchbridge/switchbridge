@@ -168,48 +168,7 @@ export function App() {
           </button>
         </div>
 
-        <ul className="nav-links">
-          <li 
-            className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-            onClick={() => handleNavClick('overview')}
-          >
-            {t.navOverview}
-          </li>
-          <li 
-            className={`nav-item ${activeTab === 'bridges' ? 'active' : ''}`}
-            onClick={() => handleNavClick('bridges')}
-          >
-            {t.navBridges}
-          </li>
-          <li 
-            className={`nav-item ${activeTab === 'channels' ? 'active' : ''}`}
-            onClick={() => handleNavClick('channels')}
-          >
-            {t.navChannels}
-          </li>
-          <li 
-            className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
-            onClick={() => handleNavClick('contacts')}
-          >
-            {t.navContacts}
-          </li>
-          <li 
-            className="nav-item"
-            style={{ marginTop: 'auto', borderColor: 'var(--drifter-pink)', color: 'var(--drifter-pink)' }}
-            onClick={async () => {
-              await fetch(`${import.meta.env.BASE_URL}api/setup/reset`, { method: 'POST' });
-              localStorage.removeItem('sb_auth_token');
-              setCurrentUser(null);
-              setAuthMode(null);
-              checkSetupStatus();
-            }}
-            title="RESET INITIAL SETUP FOR TESTING"
-          >
-            {t.navRerunSetup}
-          </li>
-        </ul>
-
-        {/* Sidebar Customizers: Language & Theme */}
+        {/* Sidebar Customizers: Language & Theme at top */}
         <div className="sidebar-customizers">
           {/* Language Switcher */}
           <div className="customizer-bar">
@@ -253,6 +212,47 @@ export function App() {
             </div>
           </div>
         </div>
+
+        <ul className="nav-links">
+          <li 
+            className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => handleNavClick('overview')}
+          >
+            {t.navOverview}
+          </li>
+          <li 
+            className={`nav-item ${activeTab === 'bridges' ? 'active' : ''}`}
+            onClick={() => handleNavClick('bridges')}
+          >
+            {t.navBridges}
+          </li>
+          <li 
+            className={`nav-item ${activeTab === 'channels' ? 'active' : ''}`}
+            onClick={() => handleNavClick('channels')}
+          >
+            {t.navChannels}
+          </li>
+          <li 
+            className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
+            onClick={() => handleNavClick('contacts')}
+          >
+            {t.navContacts}
+          </li>
+          <li 
+            className="nav-item"
+            style={{ marginTop: 'auto', borderColor: 'var(--drifter-pink)', color: 'var(--drifter-pink)' }}
+            onClick={async () => {
+              await fetch(`${import.meta.env.BASE_URL}api/setup/reset`, { method: 'POST' });
+              localStorage.removeItem('sb_auth_token');
+              setCurrentUser(null);
+              setAuthMode(null);
+              checkSetupStatus();
+            }}
+            title="RESET INITIAL SETUP FOR TESTING"
+          >
+            {t.navRerunSetup}
+          </li>
+        </ul>
       </aside>
 
       {/* Main Content */}
