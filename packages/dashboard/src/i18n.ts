@@ -19,7 +19,9 @@ export const translations = {
     // Subform
     subformAdminTitle: '[ СОЗДАНИЕ_УЧЕТНОЙ_ЗАПИСИ_ROOT_ADMIN ]',
     adminUsernameLabel: 'ИМЯ_АДМИНИСТРАТОРА',
+    adminUsernamePlaceholder: 'admin',
     adminEmailLabel: 'EMAIL_АДМИНИСТРАТОРА',
+    adminEmailPlaceholder: 'admin@switchbridge.local',
     adminPasswordLabel: 'ПАРОЛЬ (ОТ 6 СИМВ.)',
     confirmPasswordLabel: 'ПОДТВЕРЖДЕНИЕ ПАРОЛЯ',
     passwordPlaceholder: '••••••••',
@@ -128,7 +130,9 @@ export const translations = {
     // Subform
     subformAdminTitle: '[ CONFIGURE_ROOT_ADMIN_ACCOUNT ]',
     adminUsernameLabel: 'ADMIN_USERNAME',
+    adminUsernamePlaceholder: 'admin',
     adminEmailLabel: 'ADMIN_EMAIL',
+    adminEmailPlaceholder: 'admin@switchbridge.local',
     adminPasswordLabel: 'PASSWORD (MIN 6 CHARS)',
     confirmPasswordLabel: 'CONFIRM PASSWORD',
     passwordPlaceholder: '••••••••',

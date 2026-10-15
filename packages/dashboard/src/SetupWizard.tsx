@@ -18,8 +18,8 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
 
   const [authMode, setAuthMode] = useState<'builtin' | 'none' | 'oidc'>('builtin');
   const [activeInfoKey, setActiveInfoKey] = useState<'builtin' | 'none' | 'oidc' | null>(null);
-  const [username, setUsername] = useState('admin');
-  const [email, setEmail] = useState('admin@switchbridge.local');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
@@ -233,7 +233,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="admin"
+                    placeholder={t.adminUsernamePlaceholder}
                     required
                   />
                 </div>
@@ -244,7 +244,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@switchbridge.local"
+                    placeholder={t.adminEmailPlaceholder}
                   />
                 </div>
 

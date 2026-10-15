@@ -893,6 +893,13 @@ body,
   box-shadow: 2px 2px 0px var(--box-shadow-color);
 }
 
+.form-group input::placeholder {
+  color: var(--drifter-dim);
+  opacity: 0.55;
+  font-family: var(--font-readable);
+  font-size: 0.78rem;
+}
+
 .form-group-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
