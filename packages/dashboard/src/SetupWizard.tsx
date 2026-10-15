@@ -1,55 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { translations, Lang } from './i18n';
 
 interface SetupWizardProps {
   onComplete: () => void;
 }
 
-interface IntelBriefing {
-  title: string;
-  badge: string;
-  summary: string;
-  bullets: string[];
-  bestFor: string;
-}
-
-const RBAC_INTEL: Record<'builtin' | 'none' | 'oidc', IntelBriefing> = {
-  builtin: {
-    title: '01 // BUILTIN_LOCAL_RBAC',
-    badge: 'RECOMMENDED (STANDALONE)',
-    summary: 'Автономная система учетных записей и ролей, встроенная прямо в локальную базу данных (SQLite) без сторонних сервисов.',
-    bullets: [
-      'ADMIN: Полный доступ — создание и удаление мостов, каналов, API-токенов и пользователей.',
-      'OPERATOR: Операторский доступ — мониторинг очередей, логов, привязка контактов и перезапуск зависших мостов.',
-      'VIEWER: Аудит и наблюдение — только чтение дашборда, метрик и журналов сообщений.',
-      'Надежное хеширование паролей алгоритмом scrypt (с солью) и поддержка сервисных API-ключей.',
-    ],
-    bestFor: 'Команды, продакшн-инсталляции и любые сценарии, где нужна надежная защита и разграничение прав.',
-  },
-  none: {
-    title: '02 // NO_AUTHENTICATION (OPEN_LAN)',
-    badge: 'ZERO_CONFIG',
-    summary: 'Полное отключение проверки авторизации. Любой пользователь в сети сразу получает права администратора.',
-    bullets: [
-      'Система не запрашивает и не хранит логины и пароли.',
-      'Максимально быстрый запуск за 0 секунд.',
-      'Безопасно только если Switchbridge запущен на localhost, в закрытой VPN (Tailscale) или за внешним шлюзом (Cloudflare Access, Authelia, Traefik ForwardAuth).',
-    ],
-    bestFor: 'Локальная разработка, личные хоумлабы или когда авторизация уже вынесена на внешний Reverse Proxy.',
-  },
-  oidc: {
-    title: '03 // ENTERPRISE_SSO (OIDC)',
-    badge: 'ENTERPRISE IDENTITY',
-    summary: 'Делегирование аутентификации во внешнюю корпоративную систему единого входа по протоколу OpenID Connect.',
-    bullets: [
-      'Поддерживает Keycloak, Authentik, Okta, Azure AD, Dex и Google Workspace.',
-      'Пользователи логинятся через привычный корпоративный SSO-портал.',
-      'Возможность централизованного назначения прав через группы и OIDC claims.',
-    ],
-    bestFor: 'Корпорации и компании с единой системой управления учетными записями.',
-  },
-};
-
 export function SetupWizard({ onComplete }: SetupWizardProps) {
+  const [lang, setLang] = useState<Lang>(() => {
+    return (localStorage.getItem('sb_lang') as Lang) || 'ru';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sb_lang', lang);
+  }, [lang]);
+
+  const t = translations[lang];
+
   const [authMode, setAuthMode] = useState<'builtin' | 'none' | 'oidc'>('builtin');
   const [activeInfoKey, setActiveInfoKey] = useState<'builtin' | 'none' | 'oidc' | null>(null);
   const [username, setUsername] = useState('admin');
@@ -82,24 +48,24 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
 
     if (authMode === 'builtin') {
       if (!username.trim()) {
-        setError('PLEASE ENTER ADMIN USERNAME');
+        setError(t.errEnterUsername);
         return;
       }
       if (!password) {
-        setError('PLEASE ENTER ADMIN PASSWORD');
+        setError(t.errEnterPassword);
         return;
       }
       if (password.length < 6) {
-        setError('PASSWORD MUST BE AT LEAST 6 CHARACTERS');
+        setError(t.errPasswordLength);
         return;
       }
       if (password !== confirmPassword) {
-        setError('PASSWORDS DO NOT MATCH');
+        setError(t.errPasswordMismatch);
         return;
       }
     } else if (authMode === 'oidc') {
       if (!issuerUrl.trim() || !clientId.trim()) {
-        setError('PLEASE ENTER OIDC ISSUER URL AND CLIENT ID');
+        setError(t.errOidcRequired);
         return;
       }
     }
@@ -123,13 +89,13 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
 
       onComplete();
     } catch (err: any) {
-      setError(err.message || 'NETWORK ERROR OCCURRED');
+      setError(err.message || t.errNetwork);
     } finally {
       setLoading(false);
     }
   };
 
-  const activeInfo = activeInfoKey ? RBAC_INTEL[activeInfoKey] : null;
+  const activeInfo = activeInfoKey ? t.intel[activeInfoKey] : null;
 
   return (
     <div className="setup-container">
@@ -146,7 +112,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
             <div className="info-modal-header">
               <div className="info-modal-title">
                 <span className="info-modal-icon">?</span>
-                <span>INTEL_BRIEFING // {activeInfo.title}</span>
+                <span>{t.intelModalTitle} {activeInfo.title}</span>
               </div>
               <button
                 type="button"
@@ -162,7 +128,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
               <div className="info-modal-badge">{activeInfo.badge}</div>
               <p className="info-modal-summary">{activeInfo.summary}</p>
 
-              <div className="info-modal-section-title">[ KEY_CAPABILITIES ]</div>
+              <div className="info-modal-section-title">{t.intelCapabilities}</div>
               <ul className="info-modal-list">
                 {activeInfo.bullets.map((b, i) => (
                   <li key={i}>
@@ -173,7 +139,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
               </ul>
 
               <div className="info-modal-best-for">
-                <span className="best-for-label">RECOMMENDED USE CASE:</span>
+                <span className="best-for-label">{t.intelRecommendedCase}</span>
                 <span className="best-for-text">{activeInfo.bestFor}</span>
               </div>
             </div>
@@ -184,7 +150,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                 className="info-modal-action-btn"
                 onClick={() => setActiveInfoKey(null)}
               >
-                GOT_IT [CLOSE]
+                {t.intelCloseBtn}
               </button>
             </div>
           </div>
@@ -192,18 +158,38 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
       )}
 
       <div className="setup-card">
-        {/* Wizard Header */}
+        {/* Wizard Header with Language Selector */}
         <div className="setup-header">
-          <div className="setup-badge">⚡ BOOTSTRAP_V1</div>
-          <h1 className="setup-title">/// INITIAL_SETUP_WIZARD_</h1>
-          <p className="setup-step">
-            [ STEP 01/03 :: ACCESS_CONTROL_&amp;_RBAC_ENGINE ]
-          </p>
+          <div className="setup-header-top-row">
+            <div className="setup-badge">{t.setupBadge}</div>
+            
+            {/* Retro Language Switcher */}
+            <div className="customizer-bar lang-switcher">
+              <span className="customizer-label">{t.langLabel}</span>
+              <button
+                type="button"
+                className={`font-btn ${lang === 'ru' ? 'active' : ''}`}
+                onClick={() => setLang('ru')}
+              >
+                RU
+              </button>
+              <button
+                type="button"
+                className={`font-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => setLang('en')}
+              >
+                EN
+              </button>
+            </div>
+          </div>
+
+          <h1 className="setup-title">{t.setupTitle}</h1>
+          <p className="setup-step">{t.setupStep}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="setup-form">
           <div className="setup-description">
-            SELECT AUTHENTICATION &amp; PERMISSION MODEL FOR THIS SWITCHBRIDGE NODE:
+            {t.setupDescription}
           </div>
 
           {/* Option 1: Builtin Local RBAC (Recommended) */}
@@ -220,7 +206,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                   checked={authMode === 'builtin'}
                   onChange={() => setAuthMode('builtin')}
                 />
-                <span className="option-name">01 // BUILTIN_LOCAL_RBAC</span>
+                <span className="option-name">{t.optionBuiltinTitle}</span>
               </label>
 
               <div className="option-actions-group">
@@ -231,19 +217,19 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                     e.stopPropagation();
                     setActiveInfoKey('builtin');
                   }}
-                  title="VIEW DETAILED INTEL"
+                  title="VIEW INTEL"
                 >
                   ?
                 </button>
-                <span className="option-badge recommended">RECOMMENDED</span>
+                <span className="option-badge recommended">{t.badgeRecommended}</span>
               </div>
             </div>
 
             {authMode === 'builtin' && (
               <div className="subform-box" onClick={(e) => e.stopPropagation()}>
-                <div className="subform-title">[ CONFIGURE_ROOT_ADMIN_ACCOUNT ]</div>
+                <div className="subform-title">{t.subformAdminTitle}</div>
                 <div className="form-group">
-                  <label>ADMIN_USERNAME</label>
+                  <label>{t.adminUsernameLabel}</label>
                   <input
                     type="text"
                     value={username}
@@ -254,7 +240,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                 </div>
 
                 <div className="form-group">
-                  <label>ADMIN_EMAIL</label>
+                  <label>{t.adminEmailLabel}</label>
                   <input
                     type="email"
                     value={email}
@@ -265,22 +251,22 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
 
                 <div className="form-group-grid">
                   <div className="form-group">
-                    <label>ADMIN_PASSWORD (MIN 6 CHARS)</label>
+                    <label>{t.adminPasswordLabel}</label>
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={t.passwordPlaceholder}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label>CONFIRM_PASSWORD</label>
+                    <label>{t.confirmPasswordLabel}</label>
                     <input
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={t.passwordPlaceholder}
                       required
                     />
                   </div>
@@ -303,7 +289,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                   checked={authMode === 'none'}
                   onChange={() => setAuthMode('none')}
                 />
-                <span className="option-name">02 // NO_AUTHENTICATION (OPEN_LAN)</span>
+                <span className="option-name">{t.optionNoneTitle}</span>
               </label>
 
               <div className="option-actions-group">
@@ -314,11 +300,11 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                     e.stopPropagation();
                     setActiveInfoKey('none');
                   }}
-                  title="VIEW DETAILED INTEL"
+                  title="VIEW INTEL"
                 >
                   ?
                 </button>
-                <span className="option-badge neutral">ZERO_CONFIG</span>
+                <span className="option-badge neutral">{t.badgeZeroConfig}</span>
               </div>
             </div>
           </div>
@@ -337,7 +323,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                   checked={authMode === 'oidc'}
                   onChange={() => setAuthMode('oidc')}
                 />
-                <span className="option-name">03 // ENTERPRISE_SSO (OIDC)</span>
+                <span className="option-name">{t.optionOidcTitle}</span>
               </label>
 
               <div className="option-actions-group">
@@ -348,19 +334,19 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                     e.stopPropagation();
                     setActiveInfoKey('oidc');
                   }}
-                  title="VIEW DETAILED INTEL"
+                  title="VIEW INTEL"
                 >
                   ?
                 </button>
-                <span className="option-badge enterprise">ENTERPRISE</span>
+                <span className="option-badge enterprise">{t.badgeEnterprise}</span>
               </div>
             </div>
 
             {authMode === 'oidc' && (
               <div className="subform-box" onClick={(e) => e.stopPropagation()}>
-                <div className="subform-title">[ OIDC_PROVIDER_SETTINGS ]</div>
+                <div className="subform-title">{t.subformOidcTitle}</div>
                 <div className="form-group">
-                  <label>ISSUER_DISCOVERY_URL</label>
+                  <label>{t.issuerUrlLabel}</label>
                   <input
                     type="url"
                     value={issuerUrl}
@@ -371,7 +357,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                 </div>
                 <div className="form-group-grid">
                   <div className="form-group">
-                    <label>CLIENT_ID</label>
+                    <label>{t.clientIdLabel}</label>
                     <input
                       type="text"
                       value={clientId}
@@ -381,7 +367,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                     />
                   </div>
                   <div className="form-group">
-                    <label>CLIENT_SECRET (OPTIONAL)</label>
+                    <label>{t.clientSecretLabel}</label>
                     <input
                       type="password"
                       value={clientSecret}
@@ -408,7 +394,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
               className="wizard-submit-btn"
               disabled={loading}
             >
-              {loading ? 'SAVING_CONFIG...' : 'CONFIRM_RBAC_CONFIGURATION ►'}
+              {loading ? t.submitSaving : t.submitBtn}
             </button>
           </div>
         </form>

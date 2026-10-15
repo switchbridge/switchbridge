@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SetupWizard } from './SetupWizard';
+import { translations, Lang } from './i18n';
 
 interface Stats {
   bridgesCount: number;
@@ -8,6 +9,16 @@ interface Stats {
 }
 
 export function App() {
+  const [lang, setLang] = useState<Lang>(() => {
+    return (localStorage.getItem('sb_lang') as Lang) || 'ru';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sb_lang', lang);
+  }, [lang]);
+
+  const t = translations[lang];
+
   const [stats, setStats] = useState<Stats>({ bridgesCount: 0, channelsCount: 0, contactsCount: 0 });
   const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts'>('overview');
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -114,25 +125,25 @@ export function App() {
             className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => handleNavClick('overview')}
           >
-            01 // OVERVIEW
+            01 // {t.navOverview.replace(/^01 \/\/ /, '')}
           </li>
           <li 
             className={`nav-item ${activeTab === 'bridges' ? 'active' : ''}`}
             onClick={() => handleNavClick('bridges')}
           >
-            02 // BRIDGES
+            02 // {t.navBridges.replace(/^02 \/\/ /, '')}
           </li>
           <li 
             className={`nav-item ${activeTab === 'channels' ? 'active' : ''}`}
             onClick={() => handleNavClick('channels')}
           >
-            03 // CHANNELS
+            03 // {t.navChannels.replace(/^03 \/\/ /, '')}
           </li>
           <li 
             className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
             onClick={() => handleNavClick('contacts')}
           >
-            04 // CONTACTS
+            04 // {t.navContacts.replace(/^04 \/\/ /, '')}
           </li>
           <li 
             className="nav-item"
@@ -143,7 +154,7 @@ export function App() {
             }}
             title="RESET INITIAL SETUP FOR TESTING"
           >
-            ⚙ // RE-RUN SETUP
+            {t.navRerunSetup}
           </li>
         </ul>
       </aside>
@@ -158,26 +169,45 @@ export function App() {
             title={sidebarOpen ? "COLLAPSE MENU" : "EXPAND MENU"}
           >
             <span className="hamburger-icon">☰</span>
-            <span>MENU</span>
+            <span>{t.menuBtn}</span>
           </button>
 
-
           <div className="header-actions">
+            {/* Language Switcher */}
             <div className="customizer-bar">
-              <span className="customizer-label">THEME:</span>
+              <span className="customizer-label">{t.langLabel}</span>
+              <button
+                type="button"
+                className={`font-btn ${lang === 'ru' ? 'active' : ''}`}
+                onClick={() => setLang('ru')}
+              >
+                RU
+              </button>
+              <button
+                type="button"
+                className={`font-btn ${lang === 'en' ? 'active' : ''}`}
+                onClick={() => setLang('en')}
+              >
+                EN
+              </button>
+            </div>
+
+            {/* Theme Switcher */}
+            <div className="customizer-bar">
+              <span className="customizer-label">{t.themeLabel}</span>
               <button
                 type="button"
                 className={`font-btn ${theme === 'dark' ? 'active' : ''}`}
                 onClick={() => setTheme('dark')}
               >
-                🌙 NIGHT
+                {t.themeNight}
               </button>
               <button
                 type="button"
                 className={`font-btn ${theme === 'light' ? 'active' : ''}`}
                 onClick={() => setTheme('light')}
               >
-                ☀️ DAY
+                {t.themeDay}
               </button>
             </div>
           </div>
@@ -187,21 +217,21 @@ export function App() {
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-header-row">
-              <span className="stat-label">ACTIVE_BRIDGES</span>
+              <span className="stat-label">{t.statBridges}</span>
               <span className="stat-slot">SLOT_01</span>
             </div>
             <div className="stat-value">{stats.bridgesCount}</div>
           </div>
           <div className="stat-card">
             <div className="stat-header-row">
-              <span className="stat-label">CHANNELS</span>
+              <span className="stat-label">{t.statChannels}</span>
               <span className="stat-slot">SLOT_02</span>
             </div>
             <div className="stat-value">{stats.channelsCount}</div>
           </div>
           <div className="stat-card">
             <div className="stat-header-row">
-              <span className="stat-label">CONTACTS</span>
+              <span className="stat-label">{t.statContacts}</span>
               <span className="stat-slot">SLOT_03</span>
             </div>
             <div className="stat-value">{stats.contactsCount}</div>
@@ -211,7 +241,7 @@ export function App() {
         {/* Live Event Stream */}
         <section className="section-card">
           <div className="section-header">
-            <h2>[ EVENT_FEED_STREAM ]</h2>
+            <h2>{t.feedTitle}</h2>
             <span className="stat-slot">SYS_LOG_V1</span>
           </div>
           <div className="live-feed-box">
@@ -228,17 +258,17 @@ export function App() {
         {/* Bridges Table Preview */}
         <section className="section-card">
           <div className="section-header">
-            <h2>[ CONFIGURED_BRIDGE_LINKS ]</h2>
+            <h2>{t.bridgesTitle}</h2>
             <span className="stat-slot">TABLE_01</span>
           </div>
           <div className="table-container">
             <table className="table">
               <thead>
                 <tr>
-                  <th>BRIDGE_ID</th>
-                  <th>PLATFORMS</th>
-                  <th>ENDPOINTS</th>
-                  <th>STATUS</th>
+                  <th>{t.colBridgeId}</th>
+                  <th>{t.colPlatforms}</th>
+                  <th>{t.colEndpoints}</th>
+                  <th>{t.colStatus}</th>
                 </tr>
               </thead>
               <tbody>
@@ -247,7 +277,7 @@ export function App() {
                   <td>TELEGRAM, DISCORD</td>
                   <td>2_ENDPOINTS</td>
                   <td>
-                    <span className="status-badge-pixel">ONLINE</span>
+                    <span className="status-badge-pixel">{t.statusOnline}</span>
                   </td>
                 </tr>
               </tbody>
