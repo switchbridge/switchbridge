@@ -243,7 +243,9 @@ body,
 
 .customizer-buttons.theme-buttons .font-btn {
   width: 100%;
-  padding: 6px 2px;
+  height: 28px;
+  box-sizing: border-box;
+  padding: 0 4px;
   font-size: 0.52rem;
   text-align: center;
   display: inline-flex;
@@ -251,6 +253,8 @@ body,
   justify-content: center;
   gap: 3px;
   white-space: nowrap;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 /* Perfectly symmetrical lang buttons */
@@ -262,12 +266,16 @@ body,
 
 .customizer-buttons.lang-buttons .font-btn {
   min-width: 38px;
-  padding: 6px 4px;
+  height: 28px;
+  box-sizing: border-box;
+  padding: 0 4px;
   font-size: 0.55rem;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .nav-item {
@@ -476,7 +484,8 @@ body,
   background: var(--drifter-cyan);
   color: #000;
   border-color: #fff;
-  box-shadow: 2px 2px 0px var(--box-shadow-color);
+  box-shadow: none;
+  transform: none;
 }
 
 /* Keycap pill box */
