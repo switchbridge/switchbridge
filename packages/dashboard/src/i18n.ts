@@ -3,8 +3,8 @@ export type Lang = 'ru' | 'en';
 export const translations = {
   ru: {
     // Setup Wizard
-    setupBadge: '⚡ BOOTSTRAP_V1',
-    setupTitle: '/// МАСТЕР_НАЧАЛЬНОЙ_НАСТРОЙКИ_',
+    setupBadge: '⚡ МАСТЕР_НАЧАЛЬНОЙ_УСТАНОВКИ',
+    setupTitle: '/// ШАГ 01/03 :: УПРАВЛЕНИЕ_ДОСТУПОМ_И_RBAC_',
     setupStep: '[ ШАГ 01/03 :: УПРАВЛЕНИЕ_ДОСТУПОМ_И_RBAC ]',
     setupDescription: 'ВЫБЕРИТЕ МОДЕЛЬ АУТЕНТИФИКАЦИИ И ПРАВ ДОСТУПА ДЛЯ ЭТОГО УЗЛА SWITCHBRIDGE:',
     
@@ -113,8 +113,8 @@ export const translations = {
   },
   en: {
     // Setup Wizard
-    setupBadge: '⚡ BOOTSTRAP_V1',
-    setupTitle: '/// INITIAL_SETUP_WIZARD_',
+    setupBadge: '⚡ INITIAL_SETUP_WIZARD',
+    setupTitle: '/// STEP 01/03 :: ACCESS_CONTROL_&_RBAC_',
     setupStep: '[ STEP 01/03 :: ACCESS_CONTROL_&_RBAC_ENGINE ]',
     setupDescription: 'SELECT AUTHENTICATION & PERMISSION MODEL FOR THIS SWITCHBRIDGE NODE:',
     

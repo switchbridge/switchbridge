@@ -184,7 +184,6 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
           </div>
 
           <h1 className="setup-title">{t.setupTitle}</h1>
-          <p className="setup-step">{t.setupStep}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="setup-form">
