@@ -743,7 +743,15 @@ body,
   align-items: center;
   margin-bottom: 14px;
   gap: 12px;
-  flex-wrap: wrap;
+}
+
+.lang-switcher {
+  padding: 4px 8px;
+}
+
+.lang-switcher .font-btn {
+  padding: 4px 8px;
+  font-size: 0.58rem;
 }
 
 .setup-badge {

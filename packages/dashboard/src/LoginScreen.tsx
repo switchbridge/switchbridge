@@ -65,7 +65,7 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
   return (
     <div className="setup-container">
-      <div className="setup-card" style={{ maxWidth: 540 }}>
+      <div className="setup-card" style={{ maxWidth: 620 }}>
         {/* Header */}
         <div className="setup-header">
           <div className="setup-header-top-row">
