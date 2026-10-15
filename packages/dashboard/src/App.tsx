@@ -9,11 +9,28 @@ interface Stats {
 export function App() {
   const [stats, setStats] = useState<Stats>({ bridgesCount: 0, channelsCount: 0, contactsCount: 0 });
   const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts'>('overview');
+  const [font, setFont] = useState<'roboto' | 'inter' | 'outfit'>(() => {
+    return (localStorage.getItem('sb_font') as any) || 'roboto';
+  });
+  const [theme, setTheme] = useState<'cyber-cyan' | 'slate-dark' | 'emerald-matrix' | 'sunset-glow'>(() => {
+    return (localStorage.getItem('sb_theme') as any) || 'cyber-cyan';
+  });
+
   const [logs] = useState<string[]>([
     'Switchbridge Core initialized.',
     'SQLite storage engine ready (WAL mode).',
     'WebSocket stream listening on /ws/feed.',
   ]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-font', font);
+    localStorage.setItem('sb_font', font);
+  }, [font]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('sb_theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}api/stats`)
@@ -67,9 +84,73 @@ export function App() {
             <h1>Engine Overview</h1>
             <p>Standalone omnichannel orchestration dashboard</p>
           </div>
-          <div className="badge-status">
-            <span className="pulse-dot"></span>
-            System Online
+
+          <div className="header-actions">
+            <div className="customizer-bar">
+              <div className="customizer-group">
+                <span className="customizer-label">Font:</span>
+                <button
+                  type="button"
+                  className={`font-btn ${font === 'roboto' ? 'active' : ''}`}
+                  onClick={() => setFont('roboto')}
+                  title="Google Roboto font"
+                >
+                  Roboto
+                </button>
+                <button
+                  type="button"
+                  className={`font-btn ${font === 'inter' ? 'active' : ''}`}
+                  onClick={() => setFont('inter')}
+                  title="Inter font"
+                >
+                  Inter
+                </button>
+                <button
+                  type="button"
+                  className={`font-btn ${font === 'outfit' ? 'active' : ''}`}
+                  onClick={() => setFont('outfit')}
+                  title="Outfit font"
+                >
+                  Outfit
+                </button>
+              </div>
+
+              <div className="theme-dots">
+                <button
+                  type="button"
+                  className={`theme-dot ${theme === 'cyber-cyan' ? 'active' : ''}`}
+                  style={{ background: 'linear-gradient(135deg, #00e5ff, #8b5cf6)' }}
+                  onClick={() => setTheme('cyber-cyan')}
+                  title="Cyber Cyan Theme"
+                />
+                <button
+                  type="button"
+                  className={`theme-dot ${theme === 'slate-dark' ? 'active' : ''}`}
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #38bdf8)' }}
+                  onClick={() => setTheme('slate-dark')}
+                  title="Slate Dark Theme"
+                />
+                <button
+                  type="button"
+                  className={`theme-dot ${theme === 'emerald-matrix' ? 'active' : ''}`}
+                  style={{ background: 'linear-gradient(135deg, #10b981, #06b6d4)' }}
+                  onClick={() => setTheme('emerald-matrix')}
+                  title="Emerald Matrix Theme"
+                />
+                <button
+                  type="button"
+                  className={`theme-dot ${theme === 'sunset-glow' ? 'active' : ''}`}
+                  style={{ background: 'linear-gradient(135deg, #f43f5e, #fb923c)' }}
+                  onClick={() => setTheme('sunset-glow')}
+                  title="Sunset Glow Theme"
+                />
+              </div>
+            </div>
+
+            <div className="badge-status">
+              <span className="pulse-dot"></span>
+              System Online
+            </div>
           </div>
         </header>
 
