@@ -711,18 +711,21 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .setup-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   background: var(--drifter-pink);
   color: #fff;
-  font-size: 0.62rem;
+  font-size: 0.55rem;
   font-weight: 700;
   padding: 4px 8px;
   box-shadow: 2px 2px 0px var(--box-shadow-color);
+  letter-spacing: 0.5px;
 }
 
 .setup-title {
