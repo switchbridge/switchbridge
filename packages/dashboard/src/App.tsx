@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { SetupWizard } from './SetupWizard';
 
 interface Stats {
   bridgesCount: number;
@@ -16,6 +17,7 @@ export function App() {
     const saved = localStorage.getItem('sb_sidebar_open');
     return saved !== null ? saved === 'true' : true;
   });
+  const [isInitialized, setIsInitialized] = useState<boolean | null>(null);
 
   useEffect(() => {
     localStorage.setItem('sb_sidebar_open', String(sidebarOpen));
@@ -33,14 +35,30 @@ export function App() {
     localStorage.setItem('sb_pixel_theme', theme);
   }, [theme]);
 
-  useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}api/stats`)
+  const checkSetupStatus = () => {
+    fetch(`${import.meta.env.BASE_URL}api/setup/status`)
       .then((res) => res.json())
-      .then((data) => setStats(data))
+      .then((data) => {
+        setIsInitialized(Boolean(data.initialized));
+      })
       .catch(() => {
         // Fallback for standalone preview
+        setIsInitialized(true);
       });
+  };
+
+  useEffect(() => {
+    checkSetupStatus();
   }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      fetch(`${import.meta.env.BASE_URL}api/stats`)
+        .then((res) => res.json())
+        .then((data) => setStats(data))
+        .catch(() => {});
+    }
+  }, [isInitialized]);
 
   const handleNavClick = (tab: 'overview' | 'bridges' | 'channels' | 'contacts') => {
     setActiveTab(tab);
@@ -48,6 +66,22 @@ export function App() {
       setSidebarOpen(false);
     }
   };
+
+  // If system is uninitialized, present the Initial Setup Wizard
+  if (isInitialized === false) {
+    return <SetupWizard onComplete={() => checkSetupStatus()} />;
+  }
+
+  // Brief loading placeholder while checking status
+  if (isInitialized === null) {
+    return (
+      <div className="setup-container">
+        <div style={{ color: 'var(--drifter-cyan)', fontFamily: 'var(--font-pixel)', fontSize: '0.8rem' }}>
+          /// LOADING_SWITCHBRIDGE_NODE...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -99,6 +133,17 @@ export function App() {
             onClick={() => handleNavClick('contacts')}
           >
             04 // CONTACTS
+          </li>
+          <li 
+            className="nav-item"
+            style={{ marginTop: 'auto', borderColor: 'var(--drifter-pink)', color: 'var(--drifter-pink)' }}
+            onClick={async () => {
+              await fetch(`${import.meta.env.BASE_URL}api/setup/reset`, { method: 'POST' });
+              checkSetupStatus();
+            }}
+            title="RESET INITIAL SETUP FOR TESTING"
+          >
+            ⚙ // RE-RUN SETUP
           </li>
         </ul>
       </aside>

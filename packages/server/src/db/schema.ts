@@ -38,3 +38,21 @@ export const messageLogs = sqliteTable('message_logs', {
   forwardedTo: text('forwarded_to'), // JSON array of targets
   timestamp: integer('timestamp', { mode: 'timestamp' }).notNull(),
 });
+
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  username: text('username').notNull().unique(),
+  email: text('email'),
+  passwordHash: text('password_hash'),
+  role: text('role').notNull().default('viewer'), // 'admin' | 'operator' | 'viewer'
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
+export const apiKeys = sqliteTable('api_keys', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  keyHash: text('key_hash').notNull(),
+  role: text('role').notNull().default('viewer'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
+});

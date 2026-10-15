@@ -4,6 +4,10 @@ import websocket from '@fastify/websocket';
 import { db, schema } from './db/index.js';
 import { BridgeEngine } from '@switchbridge/core';
 
+import { getSystemConfig, saveSystemConfig, hashPassword } from './config.js';
+import { randomUUID } from 'node:crypto';
+import { eq } from 'drizzle-orm';
+
 export async function createServer() {
   const server = Fastify({
     logger: true,
@@ -28,13 +32,102 @@ export async function createServer() {
     socket.send(JSON.stringify({ type: 'connected', time: new Date() }));
   });
 
+  // Setup Wizard status
+  server.get('/api/setup/status', async () => {
+    const config = getSystemConfig();
+    const adminUsers = db.select().from(schema.users).where(eq(schema.users.role, 'admin')).all();
+    return {
+      initialized: config.initialized,
+      authMode: config.auth.mode,
+      hasAdmin: adminUsers.length > 0,
+      adminUsername: adminUsers[0]?.username,
+    };
+  });
+
+  // Setup Step 1: Configure RBAC
+  server.post('/api/setup/rbac', async (req, reply) => {
+    const body = req.body as {
+      mode: 'none' | 'builtin' | 'oidc';
+      admin?: {
+        username?: string;
+        password?: string;
+        email?: string;
+      };
+      oidc?: {
+        issuerUrl: string;
+        clientId: string;
+        clientSecret?: string;
+      };
+    };
+
+    if (!body || !body.mode) {
+      return reply.status(400).send({ error: 'Field "mode" is required (none | builtin | oidc)' });
+    }
+
+    if (body.mode === 'builtin') {
+      const username = body.admin?.username?.trim() || 'admin';
+      const password = body.admin?.password;
+      const email = body.admin?.email?.trim() || 'admin@switchbridge.local';
+
+      if (!password || password.length < 6) {
+        return reply.status(400).send({ error: 'Password must be at least 6 characters long' });
+      }
+
+      // Check if admin already exists
+      const existing = db.select().from(schema.users).where(eq(schema.users.username, username)).all();
+      const passwordHash = hashPassword(password);
+
+      if (existing.length > 0) {
+        db.update(schema.users)
+          .set({ passwordHash, role: 'admin' })
+          .where(eq(schema.users.username, username))
+          .run();
+      } else {
+        db.insert(schema.users)
+          .values({
+            id: randomUUID(),
+            username,
+            email,
+            passwordHash,
+            role: 'admin',
+            createdAt: new Date(),
+          })
+          .run();
+      }
+    }
+
+    // Save choice to system config
+    const updated = saveSystemConfig({
+      initialized: true, // RBAC configured, system now ready
+      auth: {
+        mode: body.mode,
+        oidc: body.oidc,
+      },
+    });
+
+    return {
+      success: true,
+      mode: body.mode,
+      config: updated,
+    };
+  });
+
+  // Reset setup for testing
+  server.post('/api/setup/reset', async () => {
+    saveSystemConfig({ initialized: false });
+    return { success: true, message: 'System setup reset to uninitialized' };
+  });
+
   // Health check
   server.get('/api/health', async () => {
+    const config = getSystemConfig();
     return {
       status: 'ok',
       service: 'switchbridge-server',
       version: '0.1.0',
       uptime: process.uptime(),
+      initialized: config.initialized,
+      authMode: config.auth.mode,
     };
   });
 

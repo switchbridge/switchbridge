@@ -53,6 +53,24 @@ sqlite.exec(`
     forwarded_to TEXT,
     timestamp INTEGER NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT,
+    password_hash TEXT,
+    role TEXT NOT NULL DEFAULT 'viewer',
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS api_keys (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    key_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'viewer',
+    created_at INTEGER NOT NULL,
+    expires_at INTEGER
+  );
 `);
 
 export const db = drizzle(sqlite, { schema });
