@@ -106,20 +106,19 @@ export function App() {
       {/* Main Content */}
       <main className="main-content">
         <header className="header">
-          <div className="header-left-group">
-            <button
-              type="button"
-              className="hamburger-btn"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              title={sidebarOpen ? "COLLAPSE MENU" : "EXPAND MENU"}
-            >
-              <span className="hamburger-icon">☰</span>
-              <span>MENU</span>
-            </button>
-            <div className="header-title">
-              <h1>/// ENGINE OVERVIEW_</h1>
-              <p>OMNICHANNEL_MESSAGE_ROUTER // NODE_STATUS: 200_OK</p>
-            </div>
+          <button
+            type="button"
+            className="hamburger-btn"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            title={sidebarOpen ? "COLLAPSE MENU" : "EXPAND MENU"}
+          >
+            <span className="hamburger-icon">☰</span>
+            <span>MENU</span>
+          </button>
+
+          <div className="header-title">
+            <h1>/// ENGINE OVERVIEW_</h1>
+            <p>OMNICHANNEL_MESSAGE_ROUTER // NODE_STATUS: 200_OK</p>
           </div>
 
           <div className="header-actions">
