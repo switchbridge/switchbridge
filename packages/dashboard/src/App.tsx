@@ -170,7 +170,7 @@ export function App() {
           <div className="live-feed-box">
             {logs.map((log, index) => (
               <div key={index} style={{ marginBottom: '6px' }}>
-                <span style={{ color: 'var(--accent-cyan)' }}>[{new Date().toLocaleTimeString()}]</span> {log}
+                <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>[{new Date().toLocaleTimeString()}]</span> {log}
               </div>
             ))}
           </div>
