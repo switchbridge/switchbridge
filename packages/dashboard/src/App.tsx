@@ -116,10 +116,6 @@ export function App() {
             <span>MENU</span>
           </button>
 
-          <div className="header-title">
-            <h1>/// ENGINE OVERVIEW_</h1>
-            <p>OMNICHANNEL_MESSAGE_ROUTER // NODE_STATUS: 200_OK</p>
-          </div>
 
           <div className="header-actions">
             <div className="customizer-bar">
