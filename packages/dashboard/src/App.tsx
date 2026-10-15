@@ -31,6 +31,7 @@ export function App() {
   });
   const [isInitialized, setIsInitialized] = useState<boolean | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authMode, setAuthMode] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -74,8 +75,10 @@ export function App() {
       const data = await res.json();
       if (res.ok && data.authenticated) {
         setCurrentUser(data.user);
+        setAuthMode(data.authMode);
       } else {
         setCurrentUser(null);
+        setAuthMode(data.authMode || null);
       }
     } catch {
       setCurrentUser(null);
@@ -195,6 +198,9 @@ export function App() {
             style={{ marginTop: 'auto', borderColor: 'var(--drifter-pink)', color: 'var(--drifter-pink)' }}
             onClick={async () => {
               await fetch(`${import.meta.env.BASE_URL}api/setup/reset`, { method: 'POST' });
+              localStorage.removeItem('sb_auth_token');
+              setCurrentUser(null);
+              setAuthMode(null);
               checkSetupStatus();
             }}
             title="RESET INITIAL SETUP FOR TESTING"
@@ -257,19 +263,28 @@ export function App() {
             </div>
 
             {/* Authenticated User Block & Logout */}
+            {/* Authenticated User Block */}
             {currentUser && (
               <div className="header-user-block">
-                <span className="user-badge-tag">
-                  👤 {currentUser.username.toUpperCase()} [{currentUser.role.toUpperCase()}]
-                </span>
-                <button
-                  type="button"
-                  className="font-btn logout-btn"
-                  onClick={handleLogout}
-                  title="LOGOUT"
-                >
-                  {t.logoutBtn}
-                </button>
+                {authMode === 'none' ? (
+                  <span className="user-badge-tag" style={{ color: 'var(--drifter-mint)' }}>
+                    🔓 OPEN_LAN [ADMIN]
+                  </span>
+                ) : (
+                  <>
+                    <span className="user-badge-tag">
+                      👤 {currentUser.username.toUpperCase()} [{currentUser.role.toUpperCase()}]
+                    </span>
+                    <button
+                      type="button"
+                      className="font-btn logout-btn"
+                      onClick={handleLogout}
+                      title="LOGOUT"
+                    >
+                      {t.logoutBtn}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
