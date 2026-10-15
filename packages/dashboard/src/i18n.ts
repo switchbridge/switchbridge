@@ -4,7 +4,7 @@ export const translations = {
   ru: {
     // Setup Wizard
     setupBadge: '⚡ МАСТЕР_НАЧАЛЬНОЙ_УСТАНОВКИ 1/3',
-    setupTitle: 'УПРАВЛЕНИЕ_ДОСТУПОМ_И_RBAC_',
+    setupTitle: 'УПРАВЛЕНИЕ_ДОСТУПОМ_',
     setupDescription: 'ВЫБЕРИТЕ МОДЕЛЬ АУТЕНТИФИКАЦИИ И ПРАВ ДОСТУПА ДЛЯ ЭТОГО УЗЛА SWITCHBRIDGE:',
     
     // Options
@@ -113,7 +113,7 @@ export const translations = {
   en: {
     // Setup Wizard
     setupBadge: '⚡ INITIAL_SETUP_WIZARD 1/3',
-    setupTitle: 'ACCESS_CONTROL_&_RBAC_',
+    setupTitle: 'ACCESS_CONTROL_',
     setupDescription: 'SELECT AUTHENTICATION & PERMISSION MODEL FOR THIS SWITCHBRIDGE NODE:',
     
     // Options
