@@ -214,14 +214,60 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 10px;
+  padding: 6px 8px;
   width: 100%;
+}
+
+.sidebar-customizers .customizer-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--drifter-pink);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  margin-right: 6px;
 }
 
 .customizer-buttons {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* Perfectly symmetrical theme buttons */
+.customizer-buttons.theme-buttons {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.customizer-buttons.theme-buttons .font-btn {
+  width: 100%;
+  padding: 6px 2px;
+  font-size: 0.52rem;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+/* Perfectly symmetrical lang buttons */
+.customizer-buttons.lang-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.customizer-buttons.lang-buttons .font-btn {
+  min-width: 38px;
+  padding: 6px 4px;
+  font-size: 0.55rem;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-item {

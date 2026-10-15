@@ -214,7 +214,7 @@ export function App() {
           {/* Language Switcher */}
           <div className="customizer-bar">
             <span className="customizer-label">{t.langLabel}</span>
-            <div className="customizer-buttons">
+            <div className="customizer-buttons lang-buttons">
               <button
                 type="button"
                 className={`font-btn ${lang === 'ru' ? 'active' : ''}`}
@@ -235,7 +235,7 @@ export function App() {
           {/* Theme Switcher */}
           <div className="customizer-bar">
             <span className="customizer-label">{t.themeLabel}</span>
-            <div className="customizer-buttons">
+            <div className="customizer-buttons theme-buttons">
               <button
                 type="button"
                 className={`font-btn ${theme === 'dark' ? 'active' : ''}`}
