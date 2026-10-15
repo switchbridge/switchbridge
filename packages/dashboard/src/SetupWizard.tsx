@@ -1,11 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface SetupWizardProps {
   onComplete: () => void;
 }
 
+interface IntelBriefing {
+  title: string;
+  badge: string;
+  summary: string;
+  bullets: string[];
+  bestFor: string;
+}
+
+const RBAC_INTEL: Record<'builtin' | 'none' | 'oidc', IntelBriefing> = {
+  builtin: {
+    title: '01 // BUILTIN_LOCAL_RBAC',
+    badge: 'RECOMMENDED (STANDALONE)',
+    summary: 'Автономная система учетных записей и ролей, встроенная прямо в локальную базу данных (SQLite) без сторонних сервисов.',
+    bullets: [
+      'ADMIN: Полный доступ — создание и удаление мостов, каналов, API-токенов и пользователей.',
+      'OPERATOR: Операторский доступ — мониторинг очередей, логов, привязка контактов и перезапуск зависших мостов.',
+      'VIEWER: Аудит и наблюдение — только чтение дашборда, метрик и журналов сообщений.',
+      'Надежное хеширование паролей алгоритмом scrypt (с солью) и поддержка сервисных API-ключей.',
+    ],
+    bestFor: 'Команды, продакшн-инсталляции и любые сценарии, где нужна надежная защита и разграничение прав.',
+  },
+  none: {
+    title: '02 // NO_AUTHENTICATION (OPEN_LAN)',
+    badge: 'ZERO_CONFIG',
+    summary: 'Полное отключение проверки авторизации. Любой пользователь в сети сразу получает права администратора.',
+    bullets: [
+      'Система не запрашивает и не хранит логины и пароли.',
+      'Максимально быстрый запуск за 0 секунд.',
+      'Безопасно только если Switchbridge запущен на localhost, в закрытой VPN (Tailscale) или за внешним шлюзом (Cloudflare Access, Authelia, Traefik ForwardAuth).',
+    ],
+    bestFor: 'Локальная разработка, личные хоумлабы или когда авторизация уже вынесена на внешний Reverse Proxy.',
+  },
+  oidc: {
+    title: '03 // ENTERPRISE_SSO (OIDC)',
+    badge: 'ENTERPRISE IDENTITY',
+    summary: 'Делегирование аутентификации во внешнюю корпоративную систему единого входа по протоколу OpenID Connect.',
+    bullets: [
+      'Поддерживает Keycloak, Authentik, Okta, Azure AD, Dex и Google Workspace.',
+      'Пользователи логинятся через привычный корпоративный SSO-портал.',
+      'Возможность централизованного назначения прав через группы и OIDC claims.',
+    ],
+    bestFor: 'Корпорации и компании с единой системой управления учетными записями.',
+  },
+};
+
 export function SetupWizard({ onComplete }: SetupWizardProps) {
   const [authMode, setAuthMode] = useState<'builtin' | 'none' | 'oidc'>('builtin');
+  const [activeInfoKey, setActiveInfoKey] = useState<'builtin' | 'none' | 'oidc' | null>(null);
   const [username, setUsername] = useState('admin');
   const [email, setEmail] = useState('admin@switchbridge.local');
   const [password, setPassword] = useState('');
@@ -18,6 +64,17 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Close modal on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveInfoKey(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,8 +129,68 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
     }
   };
 
+  const activeInfo = activeInfoKey ? RBAC_INTEL[activeInfoKey] : null;
+
   return (
     <div className="setup-container">
+      {/* Intel Briefing Modal */}
+      {activeInfo && (
+        <div 
+          className="info-modal-backdrop"
+          onClick={() => setActiveInfoKey(null)}
+        >
+          <div 
+            className="info-modal-box"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="info-modal-header">
+              <div className="info-modal-title">
+                <span className="info-modal-icon">?</span>
+                <span>INTEL_BRIEFING // {activeInfo.title}</span>
+              </div>
+              <button
+                type="button"
+                className="info-modal-close"
+                onClick={() => setActiveInfoKey(null)}
+                title="CLOSE [ESC]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="info-modal-body">
+              <div className="info-modal-badge">{activeInfo.badge}</div>
+              <p className="info-modal-summary">{activeInfo.summary}</p>
+
+              <div className="info-modal-section-title">[ KEY_CAPABILITIES ]</div>
+              <ul className="info-modal-list">
+                {activeInfo.bullets.map((b, i) => (
+                  <li key={i}>
+                    <span className="info-modal-bullet">►</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="info-modal-best-for">
+                <span className="best-for-label">RECOMMENDED USE CASE:</span>
+                <span className="best-for-text">{activeInfo.bestFor}</span>
+              </div>
+            </div>
+
+            <div className="info-modal-footer">
+              <button
+                type="button"
+                className="info-modal-action-btn"
+                onClick={() => setActiveInfoKey(null)}
+              >
+                GOT_IT [CLOSE]
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="setup-card">
         {/* Wizard Header */}
         <div className="setup-header">
@@ -105,12 +222,22 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                 />
                 <span className="option-name">01 // BUILTIN_LOCAL_RBAC</span>
               </label>
-              <span className="option-badge recommended">RECOMMENDED</span>
+
+              <div className="option-actions-group">
+                <button
+                  type="button"
+                  className="info-help-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveInfoKey('builtin');
+                  }}
+                  title="VIEW DETAILED INTEL"
+                >
+                  ?
+                </button>
+                <span className="option-badge recommended">RECOMMENDED</span>
+              </div>
             </div>
-            <p className="option-desc">
-              Standalone user management stored directly in the database. 
-              Supports 3 roles: ADMIN (Full Control), OPERATOR (Bridges &amp; Contacts), VIEWER (Read Only).
-            </p>
 
             {authMode === 'builtin' && (
               <div className="subform-box" onClick={(e) => e.stopPropagation()}>
@@ -178,12 +305,22 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                 />
                 <span className="option-name">02 // NO_AUTHENTICATION (OPEN_LAN)</span>
               </label>
-              <span className="option-badge neutral">ZERO_CONFIG</span>
+
+              <div className="option-actions-group">
+                <button
+                  type="button"
+                  className="info-help-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveInfoKey('none');
+                  }}
+                  title="VIEW DETAILED INTEL"
+                >
+                  ?
+                </button>
+                <span className="option-badge neutral">ZERO_CONFIG</span>
+              </div>
             </div>
-            <p className="option-desc">
-              Direct access without passwords. Recommended only for private homelabs, 
-              local dev environments, or when Switchbridge is secured behind Cloudflare Access / Authelia.
-            </p>
           </div>
 
           {/* Option 3: Enterprise OIDC / SSO */}
@@ -202,12 +339,22 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                 />
                 <span className="option-name">03 // ENTERPRISE_SSO (OIDC)</span>
               </label>
-              <span className="option-badge enterprise">ENTERPRISE</span>
+
+              <div className="option-actions-group">
+                <button
+                  type="button"
+                  className="info-help-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveInfoKey('oidc');
+                  }}
+                  title="VIEW DETAILED INTEL"
+                >
+                  ?
+                </button>
+                <span className="option-badge enterprise">ENTERPRISE</span>
+              </div>
             </div>
-            <p className="option-desc">
-              Delegate user authentication and group-role mapping to an external Identity Provider 
-              (Keycloak, Authentik, Okta, Google Workspace).
-            </p>
 
             {authMode === 'oidc' && (
               <div className="subform-box" onClick={(e) => e.stopPropagation()}>
