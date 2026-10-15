@@ -43,7 +43,7 @@ export const translations = {
     errNetwork: 'ОШИБКА СЕТИ ИЛИ СЕРВЕРА',
 
     // Login Screen
-    loginBadge: '⚡ АВТОРИЗАЦИЯ // RBAC_GATEWAY',
+    loginBadge: '⚡ АВТОРИЗАЦИЯ',
     loginTitle: 'ВХОД В СИСТЕМУ',
     loginDescription: 'Введите учетные данные для доступа к панели управления Switchbridge.',
     loginUsernameLabel: 'ИМЯ_ПОЛЬЗОВАТЕЛЯ',
@@ -101,11 +101,11 @@ export const translations = {
     },
 
     // Main Dashboard
-    navOverview: '01 // ОБЗОР',
-    navBridges: '02 // МОСТЫ',
-    navChannels: '03 // КАНАЛЫ',
-    navContacts: '04 // КОНТАКТЫ',
-    navRerunSetup: '⚙ // НАСТРОЙКА СИСТЕМЫ',
+    navOverview: 'ОБЗОР',
+    navBridges: 'МОСТЫ',
+    navChannels: 'КАНАЛЫ',
+    navContacts: 'КОНТАКТЫ',
+    navRerunSetup: 'НАСТРОЙКА СИСТЕМЫ',
 
     menuBtn: 'МЕНЮ',
     themeLabel: 'ТЕМА:',
@@ -168,7 +168,7 @@ export const translations = {
     errNetwork: 'NETWORK OR SERVER ERROR OCCURRED',
 
     // Login Screen
-    loginBadge: '⚡ AUTHENTICATION // RBAC_GATEWAY',
+    loginBadge: '⚡ AUTHENTICATION',
     loginTitle: 'SYSTEM LOGIN',
     loginDescription: 'Enter your credentials to access the Switchbridge dashboard.',
     loginUsernameLabel: 'USERNAME',
@@ -226,11 +226,11 @@ export const translations = {
     },
 
     // Main Dashboard
-    navOverview: '01 // OVERVIEW',
-    navBridges: '02 // BRIDGES',
-    navChannels: '03 // CHANNELS',
-    navContacts: '04 // CONTACTS',
-    navRerunSetup: '⚙ // RE-RUN SETUP',
+    navOverview: 'OVERVIEW',
+    navBridges: 'BRIDGES',
+    navChannels: 'CHANNELS',
+    navContacts: 'CONTACTS',
+    navRerunSetup: 'RE-RUN SETUP',
 
     menuBtn: 'MENU',
     themeLabel: 'THEME:',

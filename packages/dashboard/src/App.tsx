@@ -170,25 +170,25 @@ export function App() {
             className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
             onClick={() => handleNavClick('overview')}
           >
-            01 // {t.navOverview.replace(/^01 \/\/ /, '')}
+            {t.navOverview}
           </li>
           <li 
             className={`nav-item ${activeTab === 'bridges' ? 'active' : ''}`}
             onClick={() => handleNavClick('bridges')}
           >
-            02 // {t.navBridges.replace(/^02 \/\/ /, '')}
+            {t.navBridges}
           </li>
           <li 
             className={`nav-item ${activeTab === 'channels' ? 'active' : ''}`}
             onClick={() => handleNavClick('channels')}
           >
-            03 // {t.navChannels.replace(/^03 \/\/ /, '')}
+            {t.navChannels}
           </li>
           <li 
             className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
             onClick={() => handleNavClick('contacts')}
           >
-            04 // {t.navContacts.replace(/^04 \/\/ /, '')}
+            {t.navContacts}
           </li>
           <li 
             className="nav-item"
