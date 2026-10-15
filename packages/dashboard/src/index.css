@@ -969,7 +969,8 @@ body,
   justify-content: flex-end;
 }
 
-.wizard-submit-btn {
+.wizard-submit-btn,
+.setup-submit-btn {
   background: var(--drifter-pink);
   border: 2px solid #ffffff;
   color: #ffffff;
@@ -983,7 +984,8 @@ body,
   user-select: none;
 }
 
-.wizard-submit-btn:hover:not(:disabled) {
+.wizard-submit-btn:hover:not(:disabled),
+.setup-submit-btn:hover:not(:disabled) {
   background: var(--drifter-cyan);
   color: #000;
   border-color: #fff;
@@ -991,12 +993,14 @@ body,
   box-shadow: 6px 6px 0px var(--box-shadow-color);
 }
 
-.wizard-submit-btn:active:not(:disabled) {
+.wizard-submit-btn:active:not(:disabled),
+.setup-submit-btn:active:not(:disabled) {
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0px var(--box-shadow-color);
 }
 
-.wizard-submit-btn:disabled {
+.wizard-submit-btn:disabled,
+.setup-submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

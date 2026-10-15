@@ -133,9 +133,9 @@ export function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
           <button
             type="submit"
-            className="setup-submit-btn"
+            className="wizard-submit-btn"
             disabled={loading}
-            style={{ width: '100%' }}
+            style={{ width: '100%', marginTop: '12px' }}
           >
             {loading ? t.loginSubmitting : t.loginSubmitBtn}
           </button>
