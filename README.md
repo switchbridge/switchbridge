@@ -4,6 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
+[![CI](https://github.com/switchbridge/switchbridge/actions/workflows/ci.yml/badge.svg)](https://github.com/switchbridge/switchbridge/actions/workflows/ci.yml)
 [![Organization](https://img.shields.io/badge/org-Switchbridge-orange.svg)](https://github.com/switchbridge)
 
 ---
@@ -41,13 +42,14 @@ Building omnichannel bots and cross-platform synchronization natively in **n8n**
 
 ---
 
-## 📦 Monorepo Structure
+## 📦 Monorepo Structure & Documentation
 
 - [`packages/core`](./packages/core): Unified data model, event routing, and bridge engine.
-- `packages/adapter-telegram`: Telegram Bot API adapter.
-- `packages/adapter-discord`: Discord Bot adapter.
-- `packages/n8n-nodes-switchbridge`: Custom community node for n8n.
-- [`docker/`](./docker): One-click docker-compose for PostgreSQL, Redis, and n8n.
+- [`packages/server`](./packages/server): Fastify backend, SQLite/Drizzle database, OIDC & auth management.
+- [`packages/dashboard`](./packages/dashboard): React + Vite web dashboard and Setup Wizard.
+- [`docker/`](./docker): Docker-compose infrastructure (PostgreSQL, Redis, Keycloak, n8n).
+- [`docs/api.md`](./docs/api.md): REST & WebSocket API specification.
+- [`AGENTS.md`](./AGENTS.md): Guidelines and workflow rules for AI agents.
 
 ---
 
