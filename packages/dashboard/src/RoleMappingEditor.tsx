@@ -256,10 +256,11 @@ export function RoleMappingEditor({
         </div>
       )}
 
-      {/* Header & Mode Switcher */}
-      <div className="role-mapping-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div className="role-mapping-title">{t.roleMappingTitle}</div>
+      {/* Header Row: Title on Left, [?] & [RBAC] badge on Right (matching option-header-row style) */}
+      <div className="role-mapping-header-row">
+        <div className="role-mapping-title">{t.roleMappingTitle}</div>
+
+        <div className="option-actions-group">
           <button
             type="button"
             className="info-help-btn"
@@ -268,27 +269,29 @@ export function RoleMappingEditor({
           >
             ?
           </button>
+          <span className="option-badge enterprise">{t.badgeRbac}</span>
         </div>
-
-        {!isStandalone && (
-          <div className="role-mapping-mode-buttons">
-            <button
-              type="button"
-              className={`role-mapping-mode-btn ${enabled ? 'active' : ''}`}
-              onClick={() => handleToggleEnabled(true)}
-            >
-              {t.roleMappingConfigureOption}
-            </button>
-            <button
-              type="button"
-              className={`role-mapping-mode-btn ${!enabled ? 'active' : ''}`}
-              onClick={() => handleToggleEnabled(false)}
-            >
-              {t.roleMappingSkipOption}
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Mode Switcher */}
+      {!isStandalone && (
+        <div className="role-mapping-mode-buttons">
+          <button
+            type="button"
+            className={`role-mapping-mode-btn ${enabled ? 'active' : ''}`}
+            onClick={() => handleToggleEnabled(true)}
+          >
+            {t.roleMappingConfigureOption}
+          </button>
+          <button
+            type="button"
+            className={`role-mapping-mode-btn ${!enabled ? 'active' : ''}`}
+            onClick={() => handleToggleEnabled(false)}
+          >
+            {t.roleMappingSkipOption}
+          </button>
+        </div>
+      )}
 
       {!enabled && !isStandalone ? (
         <div className="mapping-sync-note" style={{ borderColor: 'var(--drifter-cyan)', color: 'var(--drifter-cyan)' }}>

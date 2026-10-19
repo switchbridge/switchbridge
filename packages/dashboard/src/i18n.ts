@@ -15,6 +15,7 @@ export const translations = {
     badgeRecommended: 'РЕКОМЕНДУЕТСЯ',
     badgeZeroConfig: 'БЕЗ_ПАРОЛЕЙ',
     badgeEnterprise: 'ENTERPRISE',
+    badgeRbac: 'RBAC',
 
     // Subform
     subformAdminTitle: '[ СОЗДАНИЕ_УЧЕТНОЙ_ЗАПИСИ_ROOT_ADMIN ]',
@@ -40,7 +41,7 @@ export const translations = {
     oidcCopied: 'СКОПИРОВАНО!',
 
     // OIDC Role Mapping Canvas
-    roleMappingTitle: '[ СОПОСТАВЛЕНИЕ_РОЛЕЙ_И_ПРАВ_OIDC ]',
+    roleMappingTitle: 'РОЛИ_И_ПРАВА',
     roleMappingDescription: 'Наглядное сопоставление групп из корпоративного Identity Provider с ролями и правами Switchbridge. Без скрытой автоматики — применяется строго то, что настроено в таблице.',
     roleMappingConfigureOption: '⚡ НАСТРОИТЬ СОПОСТАВЛЕНИЕ СЕЙЧАС',
     roleMappingSkipOption: 'ОТЛОЖИТЬ НАСТРОЙКУ (СДЕЛАТЬ ПОЗЖЕ В НАСТРОЙКАХ)',
@@ -139,7 +140,7 @@ export const translations = {
         bestFor: 'Корпорации и компании с единой системой управления учетными записями.',
       },
       roleMapping: {
-        title: 'СОПОСТАВЛЕНИЕ РОЛЕЙ И ПРАВ OIDC',
+        title: 'РОЛИ И ПРАВА (RBAC)',
         badge: 'ZERO_HEURISTICS RBAC',
         summary: 'Наглядное сопоставление корпоративных групп и ролей Identity Provider с ролями и правами Switchbridge. Без скрытых эвристик — система строго применяет только заданные вами правила.',
         bullets: [
@@ -193,6 +194,7 @@ export const translations = {
     badgeRecommended: 'RECOMMENDED',
     badgeZeroConfig: 'ZERO_CONFIG',
     badgeEnterprise: 'ENTERPRISE',
+    badgeRbac: 'RBAC',
 
     // Subform
     subformAdminTitle: '[ CONFIGURE_ROOT_ADMIN_ACCOUNT ]',
@@ -218,7 +220,7 @@ export const translations = {
     oidcCopied: 'COPIED!',
 
     // OIDC Role Mapping Canvas
-    roleMappingTitle: '[ OIDC_ROLE_AND_RIGHTS_MAPPING ]',
+    roleMappingTitle: 'ROLE_AND_RIGHTS',
     roleMappingDescription: 'Direct visual mapping of corporate Identity Provider groups to Switchbridge roles and rights. Zero hidden heuristics — strictly enforces what you configure.',
     roleMappingConfigureOption: '⚡ CONFIGURE MAPPING NOW',
     roleMappingSkipOption: 'CONFIGURE LATER IN SETTINGS',
@@ -317,7 +319,7 @@ export const translations = {
         bestFor: 'Enterprises and organizations with centralized identity management.',
       },
       roleMapping: {
-        title: 'OIDC ROLE & RIGHTS MAPPING',
+        title: 'ROLE & RIGHTS (RBAC)',
         badge: 'ZERO_HEURISTICS RBAC',
         summary: 'Direct visual mapping of corporate Identity Provider groups to Switchbridge roles and rights. Zero hidden heuristics — strictly enforces what you configure.',
         bullets: [

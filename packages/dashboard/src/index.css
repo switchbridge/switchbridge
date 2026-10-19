@@ -1352,25 +1352,26 @@ body,
   box-shadow: 3px 3px 0px var(--box-shadow-color);
 }
 
-.role-mapping-header {
+.role-mapping-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  flex-wrap: wrap;
   gap: 12px;
 }
 
 .role-mapping-title {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--drifter-cyan);
   letter-spacing: 0.5px;
 }
 
 .role-mapping-mode-buttons {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
 .role-mapping-mode-btn {
