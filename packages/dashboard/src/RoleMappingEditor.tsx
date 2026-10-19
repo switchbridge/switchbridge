@@ -64,6 +64,18 @@ export function RoleMappingEditor({
   const [defaultRole, setDefaultRole] = useState<'viewer' | 'deny'>(initialMapping?.defaultRole || 'deny');
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+
+  // Close info modal on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowInfoModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Sync internal discovered roles if prop updates
   useEffect(() => {
@@ -186,9 +198,77 @@ export function RoleMappingEditor({
 
   return (
     <div className="role-mapping-container">
+      {/* Intel Briefing Modal */}
+      {showInfoModal && (
+        <div
+          className="info-modal-backdrop"
+          onClick={() => setShowInfoModal(false)}
+        >
+          <div
+            className="info-modal-box"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="info-modal-header">
+              <div className="info-modal-title">
+                <span className="info-modal-icon">?</span>
+                <span>{t.intelModalTitle} {t.intel.roleMapping.title}</span>
+              </div>
+              <button
+                type="button"
+                className="info-modal-close"
+                onClick={() => setShowInfoModal(false)}
+                title="CLOSE [ESC]"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="info-modal-body">
+              <div className="info-modal-badge">{t.intel.roleMapping.badge}</div>
+              <p className="info-modal-summary">{t.intel.roleMapping.summary}</p>
+
+              <div className="info-modal-section-title">{t.intelCapabilities}</div>
+              <ul className="info-modal-list">
+                {t.intel.roleMapping.bullets.map((b, i) => (
+                  <li key={i}>
+                    <span className="info-modal-bullet">►</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="info-modal-best-for">
+                <span className="best-for-label">{t.intelRecommendedCase}</span>
+                <span className="best-for-text">{t.intel.roleMapping.bestFor}</span>
+              </div>
+            </div>
+
+            <div className="info-modal-footer">
+              <button
+                type="button"
+                className="info-modal-action-btn"
+                onClick={() => setShowInfoModal(false)}
+              >
+                {t.intelCloseBtn}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header & Mode Switcher */}
       <div className="role-mapping-header">
-        <div className="role-mapping-title">{t.roleMappingTitle}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="role-mapping-title">{t.roleMappingTitle}</div>
+          <button
+            type="button"
+            className="info-help-btn"
+            onClick={() => setShowInfoModal(true)}
+            title="VIEW INTEL"
+          >
+            ?
+          </button>
+        </div>
 
         {!isStandalone && (
           <div className="role-mapping-mode-buttons">
@@ -209,10 +289,6 @@ export function RoleMappingEditor({
           </div>
         )}
       </div>
-
-      <p className="role-mapping-description">
-        {t.roleMappingDescription}
-      </p>
 
       {!enabled && !isStandalone ? (
         <div className="mapping-sync-note" style={{ borderColor: 'var(--drifter-cyan)', color: 'var(--drifter-cyan)' }}>

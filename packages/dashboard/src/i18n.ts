@@ -138,6 +138,19 @@ export const translations = {
         ],
         bestFor: 'Корпорации и компании с единой системой управления учетными записями.',
       },
+      roleMapping: {
+        title: 'СОПОСТАВЛЕНИЕ РОЛЕЙ И ПРАВ OIDC',
+        badge: 'ZERO_HEURISTICS RBAC',
+        summary: 'Наглядное сопоставление корпоративных групп и ролей Identity Provider с ролями и правами Switchbridge. Без скрытых эвристик — система строго применяет только заданные вами правила.',
+        bullets: [
+          'ADMIN: Полное управление системой — конфигурация мостов, каналов, ролей и токенов.',
+          'OPERATOR: Операторский доступ — управление мостами, каналами, маршрутизацией и контактами.',
+          'VIEWER: Аудит и наблюдение — режим только для чтения (дашборд, логи, метрики).',
+          'Политика Fallback: выбор действия для ненайденных в таблице групп (запрет входа DENY или гостевой доступ VIEWER).',
+          'Синхронизация при входе: права обновляются в реальном времени при каждом SSO-входе пользователя.',
+        ],
+        bestFor: 'Точный контроль доступа сотрудников компании в соответствии с их реальными группами в Keycloak, Authentik, Okta или Active Directory.',
+      },
     },
 
     // Main Dashboard
@@ -302,6 +315,19 @@ export const translations = {
           'Centralized role mapping via OIDC claims and groups.',
         ],
         bestFor: 'Enterprises and organizations with centralized identity management.',
+      },
+      roleMapping: {
+        title: 'OIDC ROLE & RIGHTS MAPPING',
+        badge: 'ZERO_HEURISTICS RBAC',
+        summary: 'Direct visual mapping of corporate Identity Provider groups to Switchbridge roles and rights. Zero hidden heuristics — strictly enforces what you configure.',
+        bullets: [
+          'ADMIN: Full system control — manage bridges, channels, roles, and tokens.',
+          'OPERATOR: Operational access — manage bridges, channels, routing, and contacts.',
+          'VIEWER: Audit and monitoring — read-only dashboard, event feed, and metrics.',
+          'Fallback Policy: configurable behavior for unmapped groups (DENY access or VIEWER guest).',
+          'Active Login Sync: user privileges are strictly re-evaluated against this table on every SSO login.',
+        ],
+        bestFor: 'Strict access control aligned with corporate groups in Keycloak, Authentik, Okta, or Active Directory.',
       },
     },
 
