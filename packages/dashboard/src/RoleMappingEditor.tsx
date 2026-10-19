@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lang, translations } from './i18n';
 
 export interface RoleMappingRule {
@@ -18,43 +18,82 @@ export interface OidcRoleMappingConfig {
 interface RoleMappingEditorProps {
   lang: Lang;
   initialMapping?: OidcRoleMappingConfig | null;
+  discoveredRoles?: string[]; // Automatically discovered roles from OIDC
   onChange?: (mapping: OidcRoleMappingConfig) => void;
-  isStandalone?: boolean; // True when shown in Settings tab, false in Setup Wizard
+  isStandalone?: boolean; // True in Settings tab, false in Setup Wizard
 }
 
 export function RoleMappingEditor({
   lang,
   initialMapping,
+  discoveredRoles = [],
   onChange,
   isStandalone = false,
 }: RoleMappingEditorProps) {
   const t = translations[lang];
 
   const [enabled, setEnabled] = useState<boolean>(initialMapping?.enabled ?? true);
-  const [claimPath, setClaimPath] = useState<string>(initialMapping?.claimPath || 'realm_access.roles');
+  const [internalDiscoveredRoles, setInternalDiscoveredRoles] = useState<string[]>(discoveredRoles);
+
   const [rules, setRules] = useState<RoleMappingRule[]>(() => {
     if (initialMapping?.rules && initialMapping.rules.length > 0) {
       return initialMapping.rules;
     }
+    // If discovered roles are passed, auto-populate mapping rules for them
+    if (discoveredRoles && discoveredRoles.length > 0) {
+      return discoveredRoles.map((roleName, index) => {
+        const lower = roleName.toLowerCase();
+        let mappedRole: 'admin' | 'operator' | 'viewer' = 'viewer';
+        if (lower.includes('admin')) mappedRole = 'admin';
+        else if (lower.includes('operat') || lower.includes('devops') || lower.includes('manage')) mappedRole = 'operator';
+        return {
+          id: String(index + 1),
+          oidcRole: roleName,
+          switchbridgeRole: mappedRole,
+        };
+      });
+    }
+    // Default starter rules
     return [
       { id: '1', oidcRole: 'admin', switchbridgeRole: 'admin' },
       { id: '2', oidcRole: 'operator', switchbridgeRole: 'operator' },
+      { id: '3', oidcRole: 'viewer', switchbridgeRole: 'viewer' },
     ];
   });
+
   const [defaultRole, setDefaultRole] = useState<'viewer' | 'deny'>(initialMapping?.defaultRole || 'deny');
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
+  // Sync internal discovered roles if prop updates
+  useEffect(() => {
+    if (discoveredRoles && discoveredRoles.length > 0) {
+      setInternalDiscoveredRoles(discoveredRoles);
+    }
+  }, [discoveredRoles]);
+
+  // In standalone mode, fetch current settings and discovered roles if not provided
+  useEffect(() => {
+    if (isStandalone && internalDiscoveredRoles.length === 0) {
+      fetch(`${import.meta.env.BASE_URL}api/settings/role-mapping`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.discoveredRoles && Array.isArray(data.discoveredRoles)) {
+            setInternalDiscoveredRoles(data.discoveredRoles);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isStandalone]);
+
   const triggerChange = (
     newEnabled: boolean,
-    newClaimPath: string,
     newRules: RoleMappingRule[],
     newDefaultRole: 'viewer' | 'deny'
   ) => {
     if (onChange) {
       onChange({
         enabled: newEnabled,
-        claimPath: newClaimPath,
         rules: newRules,
         defaultRole: newDefaultRole,
       });
@@ -63,34 +102,40 @@ export function RoleMappingEditor({
 
   const handleToggleEnabled = (val: boolean) => {
     setEnabled(val);
-    triggerChange(val, claimPath, rules, defaultRole);
-  };
-
-  const handleClaimPathChange = (val: string) => {
-    setClaimPath(val);
-    triggerChange(enabled, val, rules, defaultRole);
+    triggerChange(val, rules, defaultRole);
   };
 
   const handleDefaultRoleChange = (val: 'viewer' | 'deny') => {
     setDefaultRole(val);
-    triggerChange(enabled, claimPath, rules, val);
+    triggerChange(enabled, rules, val);
   };
 
-  const handleAddRule = () => {
+  const handleAddRule = (roleName = '') => {
     const newRule: RoleMappingRule = {
       id: String(Date.now()),
-      oidcRole: '',
-      switchbridgeRole: 'operator',
+      oidcRole: roleName,
+      switchbridgeRole: roleName.toLowerCase().includes('admin')
+        ? 'admin'
+        : roleName.toLowerCase().includes('operat')
+        ? 'operator'
+        : 'viewer',
     };
     const updated = [...rules, newRule];
     setRules(updated);
-    triggerChange(enabled, claimPath, updated, defaultRole);
+    triggerChange(enabled, updated, defaultRole);
+  };
+
+  const handleAddOrFocusRole = (roleName: string) => {
+    const exists = rules.find((r) => r.oidcRole.toLowerCase() === roleName.toLowerCase());
+    if (!exists) {
+      handleAddRule(roleName);
+    }
   };
 
   const handleRemoveRule = (id: string) => {
     const updated = rules.filter((r) => r.id !== id);
     setRules(updated);
-    triggerChange(enabled, claimPath, updated, defaultRole);
+    triggerChange(enabled, updated, defaultRole);
   };
 
   const handleRuleChange = (
@@ -105,7 +150,7 @@ export function RoleMappingEditor({
       return r;
     });
     setRules(updated);
-    triggerChange(enabled, claimPath, updated, defaultRole);
+    triggerChange(enabled, updated, defaultRole);
   };
 
   const handleSaveStandalone = async () => {
@@ -123,7 +168,6 @@ export function RoleMappingEditor({
         headers,
         body: JSON.stringify({
           enabled,
-          claimPath,
           rules,
           defaultRole,
         }),
@@ -142,6 +186,10 @@ export function RoleMappingEditor({
       setSaveLoading(false);
     }
   };
+
+  const allDiscovered = internalDiscoveredRoles.length > 0
+    ? internalDiscoveredRoles
+    : ['admin', 'operator', 'viewer'];
 
   return (
     <div className="role-mapping-container">
@@ -179,45 +227,37 @@ export function RoleMappingEditor({
         </div>
       ) : (
         <div>
-          {/* Claim Path Selector */}
-          <div className="role-mapping-claim-box">
-            <label>{t.roleMappingClaimPathLabel}</label>
-            <div className="role-mapping-claim-input-row">
-              <input
-                type="text"
-                className="role-mapping-claim-input"
-                value={claimPath}
-                onChange={(e) => handleClaimPathChange(e.target.value)}
-                placeholder={t.roleMappingClaimPathPlaceholder}
-              />
-              <div className="role-mapping-chips">
-                <button
-                  type="button"
-                  className={`role-mapping-chip ${claimPath === 'realm_access.roles' ? 'active' : ''}`}
-                  onClick={() => handleClaimPathChange('realm_access.roles')}
-                  title="Keycloak Realm Roles"
-                >
-                  {t.roleMappingClaimKeycloakBtn}
-                </button>
-                <button
-                  type="button"
-                  className={`role-mapping-chip ${claimPath === 'groups' ? 'active' : ''}`}
-                  onClick={() => handleClaimPathChange('groups')}
-                  title="Authentik or Okta groups"
-                >
-                  {t.roleMappingClaimAuthentikBtn}
-                </button>
-                <button
-                  type="button"
-                  className={`role-mapping-chip ${claimPath === 'roles' ? 'active' : ''}`}
-                  onClick={() => handleClaimPathChange('roles')}
-                  title="Standard OIDC roles"
-                >
-                  {t.roleMappingClaimRolesBtn}
-                </button>
-              </div>
+          {/* Automatically Discovered Roles Banner */}
+          <div className="discovered-roles-box">
+            <div className="discovered-roles-header">
+              <span className="discovered-roles-label">{t.discoveredRolesLabel}</span>
+              <span className="discovered-roles-hint">{t.discoveredRolesHint}</span>
+            </div>
+            <div className="discovered-roles-chips">
+              {allDiscovered.map((roleName) => {
+                const isMapped = rules.some((rule) => rule.oidcRole.toLowerCase() === roleName.toLowerCase());
+                return (
+                  <button
+                    key={roleName}
+                    type="button"
+                    className={`discovered-role-badge ${isMapped ? 'mapped' : ''}`}
+                    onClick={() => handleAddOrFocusRole(roleName)}
+                    title={`Map role "${roleName}"`}
+                  >
+                    <span className="badge-bullet">{isMapped ? '✓' : '+'}</span>
+                    <span>{roleName}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
+
+          {/* Datalist for discovered roles autocomplete */}
+          <datalist id="discovered-roles-datalist">
+            {allDiscovered.map((r) => (
+              <option key={r} value={r} />
+            ))}
+          </datalist>
 
           {/* Two-Column Mapping Canvas */}
           <div className="mapping-canvas">
@@ -244,6 +284,7 @@ export function RoleMappingEditor({
                         type="text"
                         className="mapping-rule-input"
                         value={rule.oidcRole}
+                        list="discovered-roles-datalist"
                         onChange={(e) => handleRuleChange(rule.id, 'oidcRole', e.target.value)}
                         placeholder={t.roleMappingOidcPlaceholder}
                       />
@@ -293,7 +334,7 @@ export function RoleMappingEditor({
               <button
                 type="button"
                 className="mapping-add-btn"
-                onClick={handleAddRule}
+                onClick={() => handleAddRule('')}
               >
                 {t.roleMappingAddRuleBtn}
               </button>

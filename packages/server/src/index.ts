@@ -6,7 +6,7 @@ import { BridgeEngine } from '@switchbridge/core';
 
 import { getSystemConfig, saveSystemConfig, hashPassword, verifyPassword } from './config.js';
 import { createToken, verifyToken } from './auth.js';
-import { fetchOidcDiscovery, exchangeOidcCode, evaluateUserRole } from './oidc.js';
+import { fetchOidcDiscovery, exchangeOidcCode, evaluateUserRole, resolveInternalUrl } from './oidc.js';
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 
@@ -51,7 +51,7 @@ export async function createServer() {
     };
   });
 
-  // Setup Helper: Test OIDC Discovery
+  // Setup Helper: Test OIDC Discovery and Auto-Discover Roles
   server.post('/api/setup/oidc/test', async (req, reply) => {
     const body = req.body as { issuerUrl?: string; clientId?: string; clientSecret?: string };
     if (!body || !body.issuerUrl) {
@@ -60,6 +60,47 @@ export async function createServer() {
 
     try {
       const discovery = await fetchOidcDiscovery(body.issuerUrl);
+      const discoveredRolesSet = new Set<string>();
+
+      // Automatically discover roles from OIDC provider via client credentials
+      if (body.clientId && body.clientSecret) {
+        try {
+          const tokenUrl = resolveInternalUrl(discovery.token_endpoint);
+          const params = new URLSearchParams();
+          params.append('grant_type', 'client_credentials');
+          params.append('client_id', body.clientId);
+          params.append('client_secret', body.clientSecret);
+
+          const tokenRes = await fetch(tokenUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString(),
+            signal: AbortSignal.timeout(4000),
+          });
+
+          if (tokenRes.ok) {
+            const data = (await tokenRes.json()) as any;
+            if (data.access_token) {
+              const parts = data.access_token.split('.');
+              if (parts.length >= 2) {
+                const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
+                if (payload.realm_access?.roles) payload.realm_access.roles.forEach((r: any) => discoveredRolesSet.add(r));
+                if (payload.resource_access?.[body.clientId]?.roles) payload.resource_access[body.clientId].roles.forEach((r: any) => discoveredRolesSet.add(r));
+                if (payload.roles) payload.roles.forEach((r: any) => discoveredRolesSet.add(r));
+                if (payload.groups) payload.groups.forEach((g: any) => discoveredRolesSet.add(g));
+              }
+            }
+          }
+        } catch {}
+      }
+
+      // Filter out internal technical/scope roles
+      const filteredRoles = Array.from(discoveredRolesSet).filter(
+        (r) => !r.startsWith('default-roles-') && r !== 'uma_authorization' && r !== 'offline_access'
+      );
+
+      const finalRoles = filteredRoles.length > 0 ? filteredRoles : ['admin', 'operator', 'viewer'];
+
       return {
         success: true,
         issuer: discovery.issuer,
@@ -67,6 +108,7 @@ export async function createServer() {
         tokenEndpoint: discovery.token_endpoint,
         userinfoEndpoint: discovery.userinfo_endpoint,
         jwksUri: discovery.jwks_uri,
+        discoveredRoles: finalRoles,
       };
     } catch (err: any) {
       return reply.status(400).send({
@@ -266,6 +308,29 @@ export async function createServer() {
       const existing = db.select().from(schema.users).where(eq(schema.users.username, userInfo.username)).all();
       let user = existing[0];
 
+      // Auto-collect any newly discovered roles from user's token for administrator
+      if (userInfo.roles && userInfo.roles.length > 0 && config.auth.oidc) {
+        const existingSet = new Set(config.auth.oidc.discoveredRoles || []);
+        let hasNew = false;
+        for (const r of userInfo.roles) {
+          if (!existingSet.has(r)) {
+            existingSet.add(r);
+            hasNew = true;
+          }
+        }
+        if (hasNew) {
+          saveSystemConfig({
+            auth: {
+              ...config.auth,
+              oidc: {
+                ...config.auth.oidc,
+                discoveredRoles: Array.from(existingSet),
+              },
+            },
+          });
+        }
+      }
+
       // Determine user role strictly based on administrator-configured mapping rules
       const roleMappingConfig = config.auth.oidc.roleMapping;
       const role = evaluateUserRole(userInfo.roles, roleMappingConfig);
@@ -430,16 +495,16 @@ export async function createServer() {
     };
   });
 
-  // Get current OIDC Role Mapping settings
+  // Get current OIDC Role Mapping settings & discovered roles
   server.get('/api/settings/role-mapping', async () => {
     const config = getSystemConfig();
     return {
       success: true,
       authMode: config.auth.mode,
       oidcConfigured: Boolean(config.auth.oidc),
+      discoveredRoles: config.auth.oidc?.discoveredRoles || ['admin', 'operator', 'viewer'],
       roleMapping: config.auth.oidc?.roleMapping || {
         enabled: false,
-        claimPath: 'realm_access.roles',
         rules: [],
         defaultRole: 'deny',
       },

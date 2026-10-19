@@ -1405,72 +1405,75 @@ body,
   margin-bottom: 16px;
 }
 
-.role-mapping-claim-box {
+.discovered-roles-box {
   background: var(--drifter-black);
   border: 2px solid var(--drifter-border);
   padding: 12px 14px;
   margin-bottom: 16px;
 }
 
-.role-mapping-claim-box label {
-  display: block;
+.discovered-roles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.discovered-roles-label {
   font-size: 0.58rem;
   color: var(--drifter-cyan);
-  margin-bottom: 8px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.role-mapping-claim-input-row {
+.discovered-roles-hint {
+  font-family: var(--font-readable);
+  font-size: 0.72rem;
+  color: var(--drifter-dim);
+}
+
+.discovered-roles-chips {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
-.role-mapping-claim-input {
-  flex: 1 1 240px;
-  min-width: 200px;
-  padding: 8px 12px;
+.discovered-role-badge {
   background: var(--drifter-bg);
   border: 2px solid var(--drifter-border);
-  color: var(--drifter-cyan);
-  font-family: var(--font-readable);
-  font-size: 0.78rem;
-  outline: none;
-}
-
-.role-mapping-claim-input:focus {
-  border-color: var(--drifter-pink);
-}
-
-.role-mapping-chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.role-mapping-chip {
-  background: var(--drifter-card);
-  border: 1px solid var(--drifter-border);
-  color: var(--drifter-dim);
+  color: var(--drifter-white);
   font-family: var(--font-pixel);
-  font-size: 0.55rem;
-  padding: 6px 9px;
+  font-size: 0.6rem;
+  padding: 7px 12px;
   cursor: pointer;
-  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   transition: all 0.1s ease;
 }
 
-.role-mapping-chip:hover {
+.discovered-role-badge:hover {
   border-color: var(--drifter-cyan);
-  color: var(--drifter-white);
+  color: var(--drifter-cyan);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px var(--box-shadow-color);
 }
 
-.role-mapping-chip.active {
-  background: var(--drifter-cyan);
-  color: #000;
-  border-color: #fff;
+.discovered-role-badge.mapped {
+  border-color: var(--drifter-mint);
+  color: var(--drifter-mint);
+  background: rgba(56, 239, 125, 0.08);
+}
+
+.discovered-role-badge .badge-bullet {
+  color: var(--drifter-pink);
+  font-weight: bold;
+}
+
+.discovered-role-badge.mapped .badge-bullet {
+  color: var(--drifter-mint);
 }
 
 /* Two-column Mapping Canvas */

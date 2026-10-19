@@ -29,6 +29,7 @@ export interface SwitchbridgeConfig {
       issuerUrl: string;
       clientId: string;
       clientSecret?: string;
+      discoveredRoles?: string[];
       roleMapping?: OidcRoleMappingConfig;
     };
   };

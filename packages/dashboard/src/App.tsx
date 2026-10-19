@@ -24,6 +24,7 @@ export function App() {
   const [stats, setStats] = useState<Stats>({ bridgesCount: 0, channelsCount: 0, contactsCount: 0 });
   const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts' | 'settings'>('overview');
   const [oidcRoleMapping, setOidcRoleMapping] = useState<OidcRoleMappingConfig | null>(null);
+  const [discoveredRoles, setDiscoveredRoles] = useState<string[]>([]);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('sb_pixel_theme') as any) || 'dark';
   });
@@ -74,6 +75,9 @@ export function App() {
         .then((data) => {
           if (data.roleMapping) {
             setOidcRoleMapping(data.roleMapping);
+          }
+          if (data.discoveredRoles && Array.isArray(data.discoveredRoles)) {
+            setDiscoveredRoles(data.discoveredRoles);
           }
         })
         .catch(() => {});
@@ -321,6 +325,7 @@ export function App() {
             <RoleMappingEditor
               lang={lang}
               initialMapping={oidcRoleMapping}
+              discoveredRoles={discoveredRoles}
               isStandalone={true}
             />
           </section>

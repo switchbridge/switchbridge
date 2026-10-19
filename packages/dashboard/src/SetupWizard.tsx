@@ -34,6 +34,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
     issuer?: string;
     authEndpoint?: string;
     tokenEndpoint?: string;
+    discoveredRoles?: string[];
     error?: string;
   } | null>(null);
   const [copiedRedirect, setCopiedRedirect] = useState(false);
@@ -79,7 +80,11 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
       const res = await fetch(`${import.meta.env.BASE_URL}api/setup/oidc/test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ issuerUrl: issuerUrl.trim(), clientId: clientId.trim() }),
+        body: JSON.stringify({
+          issuerUrl: issuerUrl.trim(),
+          clientId: clientId.trim(),
+          clientSecret: clientSecret.trim(),
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -90,7 +95,25 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
         issuer: data.issuer,
         authEndpoint: data.authorizationEndpoint,
         tokenEndpoint: data.tokenEndpoint,
+        discoveredRoles: data.discoveredRoles,
       });
+
+      if (data.discoveredRoles && Array.isArray(data.discoveredRoles) && data.discoveredRoles.length > 0) {
+        setRoleMappingConfig((prev) => ({
+          ...prev,
+          rules: data.discoveredRoles.map((r: string, idx: number) => {
+            const lower = r.toLowerCase();
+            let mappedRole: 'admin' | 'operator' | 'viewer' = 'viewer';
+            if (lower.includes('admin')) mappedRole = 'admin';
+            else if (lower.includes('operat') || lower.includes('devops') || lower.includes('manage')) mappedRole = 'operator';
+            return {
+              id: String(idx + 1),
+              oidcRole: r,
+              switchbridgeRole: mappedRole,
+            };
+          }),
+        }));
+      }
     } catch (err: any) {
       setOidcTestResult({
         success: false,
@@ -569,6 +592,7 @@ export function SetupWizard({ onComplete }: SetupWizardProps) {
                   <RoleMappingEditor
                     lang={lang}
                     initialMapping={roleMappingConfig}
+                    discoveredRoles={oidcTestResult.discoveredRoles}
                     onChange={setRoleMappingConfig}
                     isStandalone={false}
                   />
