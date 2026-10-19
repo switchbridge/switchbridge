@@ -125,13 +125,6 @@ export function RoleMappingEditor({
     triggerChange(enabled, updated, defaultRole);
   };
 
-  const handleAddOrFocusRole = (roleName: string) => {
-    const exists = rules.find((r) => r.oidcRole.toLowerCase() === roleName.toLowerCase());
-    if (!exists) {
-      handleAddRule(roleName);
-    }
-  };
-
   const handleRemoveRule = (id: string) => {
     const updated = rules.filter((r) => r.id !== id);
     setRules(updated);
@@ -227,31 +220,6 @@ export function RoleMappingEditor({
         </div>
       ) : (
         <div>
-          {/* Automatically Discovered Roles Banner */}
-          <div className="discovered-roles-box">
-            <div className="discovered-roles-header">
-              <span className="discovered-roles-label">{t.discoveredRolesLabel}</span>
-              <span className="discovered-roles-hint">{t.discoveredRolesHint}</span>
-            </div>
-            <div className="discovered-roles-chips">
-              {allDiscovered.map((roleName) => {
-                const isMapped = rules.some((rule) => rule.oidcRole.toLowerCase() === roleName.toLowerCase());
-                return (
-                  <button
-                    key={roleName}
-                    type="button"
-                    className={`discovered-role-badge ${isMapped ? 'mapped' : ''}`}
-                    onClick={() => handleAddOrFocusRole(roleName)}
-                    title={`Map role "${roleName}"`}
-                  >
-                    <span className="badge-bullet">{isMapped ? '✓' : '+'}</span>
-                    <span>{roleName}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Datalist for discovered roles autocomplete */}
           <datalist id="discovered-roles-datalist">
             {allDiscovered.map((r) => (
