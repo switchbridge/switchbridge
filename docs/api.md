@@ -91,7 +91,7 @@
 }
 ```
 
-**Тело запроса (пример OIDC):**
+**Тело запроса (пример OIDC с явным сопоставлением ролей):**
 ```json
 {
   "mode": "oidc",
@@ -101,12 +101,56 @@
     "clientSecret": "secret",
     "roleMapping": {
       "enabled": true,
-      "adminRoles": ["admin", "superadmin"],
-      "operatorRoles": ["operator"],
-      "defaultRole": "viewer",
-      "claimsPath": "realm_access.roles"
+      "claimPath": "realm_access.roles",
+      "rules": [
+        { "id": "1", "oidcRole": "super-admins", "switchbridgeRole": "admin" },
+        { "id": "2", "oidcRole": "devops-team", "switchbridgeRole": "operator" },
+        { "id": "3", "oidcRole": "support-staff", "switchbridgeRole": "viewer" }
+      ],
+      "defaultRole": "deny"
     }
   }
+}
+```
+
+---
+
+### `GET /api/settings/role-mapping`
+Получение текущих настроек сопоставления ролей OIDC.
+
+**Ответ (200 OK):**
+```json
+{
+  "success": true,
+  "authMode": "oidc",
+  "oidcConfigured": true,
+  "roleMapping": {
+    "enabled": true,
+    "claimPath": "realm_access.roles",
+    "rules": [
+      { "id": "1", "oidcRole": "admin", "switchbridgeRole": "admin" },
+      { "id": "2", "oidcRole": "operator", "switchbridgeRole": "operator" }
+    ],
+    "defaultRole": "deny"
+  }
+}
+```
+
+---
+
+### `POST /api/settings/role-mapping`
+Обновление таблицы правил сопоставления ролей и прав OIDC администратором в любое время.
+
+**Тело запроса:**
+```json
+{
+  "enabled": true,
+  "claimPath": "realm_access.roles",
+  "rules": [
+    { "id": "1", "oidcRole": "devops", "switchbridgeRole": "operator" },
+    { "id": "2", "oidcRole": "admins", "switchbridgeRole": "admin" }
+  ],
+  "defaultRole": "deny"
 }
 ```
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { SetupWizard } from './SetupWizard';
 import { LoginScreen, User } from './LoginScreen';
 import { translations, Lang } from './i18n';
+import { RoleMappingEditor, OidcRoleMappingConfig } from './RoleMappingEditor';
 
 interface Stats {
   bridgesCount: number;
@@ -21,7 +22,8 @@ export function App() {
   const t = translations[lang];
 
   const [stats, setStats] = useState<Stats>({ bridgesCount: 0, channelsCount: 0, contactsCount: 0 });
-  const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'bridges' | 'channels' | 'contacts' | 'settings'>('overview');
+  const [oidcRoleMapping, setOidcRoleMapping] = useState<OidcRoleMappingConfig | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('sb_pixel_theme') as any) || 'dark';
   });
@@ -55,12 +57,28 @@ export function App() {
       .then((res) => res.json())
       .then((data) => {
         setIsInitialized(Boolean(data.initialized));
+        if (data.authMode) {
+          setAuthMode(data.authMode);
+        }
       })
       .catch(() => {
         // Fallback for standalone preview
         setIsInitialized(true);
       });
   };
+
+  useEffect(() => {
+    if (activeTab === 'settings') {
+      fetch(`${import.meta.env.BASE_URL}api/settings/role-mapping`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.roleMapping) {
+            setOidcRoleMapping(data.roleMapping);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [activeTab]);
 
   const checkAuth = async () => {
     setAuthLoading(true);
@@ -114,7 +132,7 @@ export function App() {
     setCurrentUser(null);
   };
 
-  const handleNavClick = (tab: 'overview' | 'bridges' | 'channels' | 'contacts') => {
+  const handleNavClick = (tab: 'overview' | 'bridges' | 'channels' | 'contacts' | 'settings') => {
     setActiveTab(tab);
     if (typeof window !== 'undefined' && (window.innerWidth <= 900 || window.matchMedia('(orientation: portrait)').matches)) {
       setSidebarOpen(false);
@@ -139,7 +157,7 @@ export function App() {
 
   // If system is initialized but user has not logged in, show Login Screen
   if (!currentUser) {
-    return <LoginScreen onLoginSuccess={(user) => setCurrentUser(user)} />;
+    return <LoginScreen authMode={authMode} onLoginSuccess={(user) => setCurrentUser(user)} />;
   }
 
   return (
@@ -239,6 +257,12 @@ export function App() {
             {t.navContacts}
           </li>
           <li 
+            className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => handleNavClick('settings')}
+          >
+            {t.navSettings}
+          </li>
+          <li 
             className="nav-item"
             style={{ marginTop: 'auto', borderColor: 'var(--drifter-pink)', color: 'var(--drifter-pink)' }}
             onClick={async () => {
@@ -288,77 +312,93 @@ export function App() {
           </div>
         </header>
 
-        {/* Stats Grid */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-header-row">
-              <span className="stat-label">{t.statBridges}</span>
-              <span className="stat-slot">SLOT_01</span>
+        {activeTab === 'settings' ? (
+          <section className="section-card">
+            <div className="section-header">
+              <h2>{t.settingsTitle}</h2>
+              <span className="stat-slot">RBAC_CONFIG</span>
             </div>
-            <div className="stat-value">{stats.bridgesCount}</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-header-row">
-              <span className="stat-label">{t.statChannels}</span>
-              <span className="stat-slot">SLOT_02</span>
-            </div>
-            <div className="stat-value">{stats.channelsCount}</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-header-row">
-              <span className="stat-label">{t.statContacts}</span>
-              <span className="stat-slot">SLOT_03</span>
-            </div>
-            <div className="stat-value">{stats.contactsCount}</div>
-          </div>
-        </div>
-
-        {/* Live Event Stream */}
-        <section className="section-card">
-          <div className="section-header">
-            <h2>{t.feedTitle}</h2>
-            <span className="stat-slot">SYS_LOG_V1</span>
-          </div>
-          <div className="live-feed-box">
-            {logs.map((log, index) => (
-              <div key={index} className="feed-line">
-                <span className="feed-prompt">&gt;</span>
-                <span className="feed-time">[{new Date().toLocaleTimeString()}]</span>
-                <span>{log}</span>
+            <RoleMappingEditor
+              lang={lang}
+              initialMapping={oidcRoleMapping}
+              isStandalone={true}
+            />
+          </section>
+        ) : (
+          <>
+            {/* Stats Grid */}
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-header-row">
+                  <span className="stat-label">{t.statBridges}</span>
+                  <span className="stat-slot">SLOT_01</span>
+                </div>
+                <div className="stat-value">{stats.bridgesCount}</div>
               </div>
-            ))}
-          </div>
-        </section>
+              <div className="stat-card">
+                <div className="stat-header-row">
+                  <span className="stat-label">{t.statChannels}</span>
+                  <span className="stat-slot">SLOT_02</span>
+                </div>
+                <div className="stat-value">{stats.channelsCount}</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-header-row">
+                  <span className="stat-label">{t.statContacts}</span>
+                  <span className="stat-slot">SLOT_03</span>
+                </div>
+                <div className="stat-value">{stats.contactsCount}</div>
+              </div>
+            </div>
 
-        {/* Bridges Table Preview */}
-        <section className="section-card">
-          <div className="section-header">
-            <h2>{t.bridgesTitle}</h2>
-            <span className="stat-slot">TABLE_01</span>
-          </div>
-          <div className="table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>{t.colBridgeId}</th>
-                  <th>{t.colPlatforms}</th>
-                  <th>{t.colEndpoints}</th>
-                  <th>{t.colStatus}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>TELEGRAM_SUPPORT &lt;--&gt; DISCORD_HELP</td>
-                  <td>TELEGRAM, DISCORD</td>
-                  <td>2_ENDPOINTS</td>
-                  <td>
-                    <span className="status-badge-pixel">{t.statusOnline}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+            {/* Live Event Stream */}
+            <section className="section-card">
+              <div className="section-header">
+                <h2>{t.feedTitle}</h2>
+                <span className="stat-slot">SYS_LOG_V1</span>
+              </div>
+              <div className="live-feed-box">
+                {logs.map((log, index) => (
+                  <div key={index} className="feed-line">
+                    <span className="feed-prompt">&gt;</span>
+                    <span className="feed-time">[{new Date().toLocaleTimeString()}]</span>
+                    <span>{log}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Bridges Table Preview */}
+            <section className="section-card">
+              <div className="section-header">
+                <h2>{t.bridgesTitle}</h2>
+                <span className="stat-slot">TABLE_01</span>
+              </div>
+              <div className="table-container">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>{t.colBridgeId}</th>
+                      <th>{t.colPlatforms}</th>
+                      <th>{t.colEndpoints}</th>
+                      <th>{t.colStatus}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>TELEGRAM_SUPPORT &lt;--&gt; DISCORD_HELP</td>
+                      <td>TELEGRAM, DISCORD</td>
+                      <td>2_ENDPOINTS</td>
+                      <td>
+                        <span className="status-badge-pixel">{t.statusOnline}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </>
+        )}
       </main>
     </div>
   );

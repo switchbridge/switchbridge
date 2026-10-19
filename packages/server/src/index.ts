@@ -6,6 +6,7 @@ import { BridgeEngine } from '@switchbridge/core';
 
 import { getSystemConfig, saveSystemConfig, hashPassword, verifyPassword } from './config.js';
 import { createToken, verifyToken } from './auth.js';
+import { fetchOidcDiscovery, exchangeOidcCode, evaluateUserRole } from './oidc.js';
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 
@@ -42,7 +43,37 @@ export async function createServer() {
       authMode: config.auth.mode,
       hasAdmin: adminUsers.length > 0,
       adminUsername: adminUsers[0]?.username,
+      oidc: config.auth.oidc ? {
+        issuerUrl: config.auth.oidc.issuerUrl,
+        clientId: config.auth.oidc.clientId,
+        roleMapping: config.auth.oidc.roleMapping || null,
+      } : null,
     };
+  });
+
+  // Setup Helper: Test OIDC Discovery
+  server.post('/api/setup/oidc/test', async (req, reply) => {
+    const body = req.body as { issuerUrl?: string; clientId?: string; clientSecret?: string };
+    if (!body || !body.issuerUrl) {
+      return reply.status(400).send({ error: 'Field "issuerUrl" is required' });
+    }
+
+    try {
+      const discovery = await fetchOidcDiscovery(body.issuerUrl);
+      return {
+        success: true,
+        issuer: discovery.issuer,
+        authorizationEndpoint: discovery.authorization_endpoint,
+        tokenEndpoint: discovery.token_endpoint,
+        userinfoEndpoint: discovery.userinfo_endpoint,
+        jwksUri: discovery.jwks_uri,
+      };
+    } catch (err: any) {
+      return reply.status(400).send({
+        success: false,
+        error: err.message || 'Failed to reach or parse OIDC discovery configuration',
+      });
+    }
   });
 
   // Setup Step 1: Configure RBAC
@@ -58,6 +89,20 @@ export async function createServer() {
         issuerUrl: string;
         clientId: string;
         clientSecret?: string;
+        roleMapping?: {
+          enabled: boolean;
+          claimPath?: string;
+          rules?: Array<{
+            id: string;
+            oidcRole: string;
+            switchbridgeRole: 'admin' | 'operator' | 'viewer';
+            permissions?: string[];
+          }>;
+          defaultRole?: 'viewer' | 'deny';
+          adminRoles?: string[];
+          operatorRoles?: string[];
+          claimsPath?: string;
+        };
       };
     };
 
@@ -151,6 +196,131 @@ export async function createServer() {
         role: user.role,
       },
     };
+  });
+
+  // Authentication: Generate OIDC Authorization URL
+  server.get('/api/auth/oidc/url', async (req, reply) => {
+    const config = getSystemConfig();
+    if (config.auth.mode !== 'oidc' || !config.auth.oidc) {
+      return reply.status(400).send({ error: 'OIDC is not enabled or configured' });
+    }
+
+    const { issuerUrl, clientId } = config.auth.oidc;
+    const redirectUri = (req.query as any)?.redirectUri;
+    if (!redirectUri) {
+      return reply.status(400).send({ error: 'redirectUri is required in query params' });
+    }
+
+    try {
+      const discovery = await fetchOidcDiscovery(issuerUrl);
+      const state = randomUUID();
+      let authEndpoint = discovery.authorization_endpoint;
+      try {
+        const userOrigin = new URL(issuerUrl).origin;
+        const discOrigin = new URL(authEndpoint).origin;
+        if (userOrigin !== discOrigin) {
+          authEndpoint = authEndpoint.replace(discOrigin, userOrigin);
+        }
+      } catch {}
+
+      const authUrl = new URL(authEndpoint);
+      authUrl.searchParams.set('client_id', clientId);
+      authUrl.searchParams.set('response_type', 'code');
+      authUrl.searchParams.set('scope', 'openid profile email');
+      authUrl.searchParams.set('redirect_uri', redirectUri);
+      authUrl.searchParams.set('state', state);
+
+      return {
+        success: true,
+        url: authUrl.toString(),
+        state,
+      };
+    } catch (err: any) {
+      return reply.status(500).send({ error: err.message || 'Failed to build OIDC authorization URL' });
+    }
+  });
+
+  // Authentication: Exchange OIDC code for Switchbridge Session
+  server.post('/api/auth/oidc/exchange', async (req, reply) => {
+    const config = getSystemConfig();
+    if (config.auth.mode !== 'oidc' || !config.auth.oidc) {
+      return reply.status(400).send({ error: 'OIDC is not enabled or configured' });
+    }
+
+    const body = req.body as { code?: string; redirectUri?: string };
+    if (!body || !body.code || !body.redirectUri) {
+      return reply.status(400).send({ error: 'Fields "code" and "redirectUri" are required' });
+    }
+
+    try {
+      const userInfo = await exchangeOidcCode({
+        issuerUrl: config.auth.oidc.issuerUrl,
+        clientId: config.auth.oidc.clientId,
+        clientSecret: config.auth.oidc.clientSecret,
+        code: body.code,
+        redirectUri: body.redirectUri,
+        claimPath: config.auth.oidc.roleMapping?.claimPath,
+      });
+
+      // Find or create user in SQLite database
+      const existing = db.select().from(schema.users).where(eq(schema.users.username, userInfo.username)).all();
+      let user = existing[0];
+
+      // Determine user role strictly based on administrator-configured mapping rules
+      const roleMappingConfig = config.auth.oidc.roleMapping;
+      const role = evaluateUserRole(userInfo.roles, roleMappingConfig);
+
+      if (role === 'deny') {
+        return reply.status(403).send({
+          error: 'ACCESS_DENIED_NO_ROLE',
+          message: 'ACCESS DENIED: No authorized role assigned in Identity Provider for your account.',
+        });
+      }
+
+      if (!user) {
+        user = {
+          id: randomUUID(),
+          username: userInfo.username,
+          email: userInfo.email,
+          passwordHash: null,
+          role,
+          createdAt: new Date(),
+        };
+        db.insert(schema.users).values(user).run();
+      } else {
+        // Synchronize user role and email on every login
+        if (user.role !== role || user.email !== userInfo.email) {
+          db.update(schema.users)
+            .set({ role, email: userInfo.email })
+            .where(eq(schema.users.id, user.id))
+            .run();
+          user.role = role;
+          user.email = userInfo.email;
+        }
+      }
+
+      const token = createToken({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      });
+
+      return {
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        },
+      };
+    } catch (err: any) {
+      return reply.status(400).send({
+        error: err.message || 'Failed to exchange authorization code with OIDC provider',
+      });
+    }
   });
 
   // Authentication: Current User Status
@@ -257,6 +427,66 @@ export async function createServer() {
       bridgesCount,
       channelsCount,
       contactsCount,
+    };
+  });
+
+  // Get current OIDC Role Mapping settings
+  server.get('/api/settings/role-mapping', async () => {
+    const config = getSystemConfig();
+    return {
+      success: true,
+      authMode: config.auth.mode,
+      oidcConfigured: Boolean(config.auth.oidc),
+      roleMapping: config.auth.oidc?.roleMapping || {
+        enabled: false,
+        claimPath: 'realm_access.roles',
+        rules: [],
+        defaultRole: 'deny',
+      },
+    };
+  });
+
+  // Save/Update OIDC Role Mapping settings (administrator authority)
+  server.post('/api/settings/role-mapping', async (req, reply) => {
+    const config = getSystemConfig();
+    if (config.auth.mode !== 'oidc' || !config.auth.oidc) {
+      return reply.status(400).send({
+        error: 'OIDC_NOT_CONFIGURED',
+        message: 'OIDC authentication is not active in this instance',
+      });
+    }
+
+    const body = req.body as {
+      enabled: boolean;
+      claimPath?: string;
+      rules?: any[];
+      defaultRole?: 'viewer' | 'deny';
+    };
+
+    if (!body) {
+      return reply.status(400).send({ error: 'MISSING_REQUEST_BODY' });
+    }
+
+    const updatedRoleMapping = {
+      enabled: Boolean(body.enabled),
+      claimPath: body.claimPath?.trim() || 'realm_access.roles',
+      rules: Array.isArray(body.rules) ? body.rules : [],
+      defaultRole: body.defaultRole || 'deny',
+    };
+
+    saveSystemConfig({
+      auth: {
+        ...config.auth,
+        oidc: {
+          ...config.auth.oidc,
+          roleMapping: updatedRoleMapping,
+        },
+      },
+    });
+
+    return {
+      success: true,
+      roleMapping: updatedRoleMapping,
     };
   });
 

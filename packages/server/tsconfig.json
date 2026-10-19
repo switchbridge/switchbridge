@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "paths": {
-      "@switchbridge/core": ["../core/src/index.ts"]
+      "@switchbridge/core": ["../core/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"]

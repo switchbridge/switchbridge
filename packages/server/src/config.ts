@@ -2,6 +2,24 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
+export interface RoleMappingRule {
+  id: string;
+  oidcRole: string;
+  switchbridgeRole: 'admin' | 'operator' | 'viewer';
+  permissions?: string[];
+}
+
+export interface OidcRoleMappingConfig {
+  enabled: boolean;
+  claimPath?: string;
+  rules?: RoleMappingRule[];
+  defaultRole?: 'viewer' | 'deny';
+  // Legacy backward-compatibility fields:
+  adminRoles?: string[];
+  operatorRoles?: string[];
+  claimsPath?: string;
+}
+
 export interface SwitchbridgeConfig {
   version: string;
   initialized: boolean;
@@ -11,6 +29,7 @@ export interface SwitchbridgeConfig {
       issuerUrl: string;
       clientId: string;
       clientSecret?: string;
+      roleMapping?: OidcRoleMappingConfig;
     };
   };
   database: {

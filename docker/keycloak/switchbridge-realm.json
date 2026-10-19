@@ -1,0 +1,86 @@
+{
+  "realm": "switchbridge",
+  "enabled": true,
+  "displayName": "Switchbridge SSO",
+  "sslRequired": "none",
+  "registrationAllowed": true,
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "clients": [
+    {
+      "clientId": "switchbridge",
+      "name": "Switchbridge Web App",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "switchbridge-secret",
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*",
+        "http://localhost:3000/*",
+        "http://127.0.0.1:3000/*",
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator role"
+      },
+      {
+        "name": "operator",
+        "description": "Operator role"
+      },
+      {
+        "name": "viewer",
+        "description": "Viewer role"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "sso-admin",
+      "enabled": true,
+      "email": "admin@switchbridge.local",
+      "firstName": "Admin",
+      "lastName": "Operator",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    },
+    {
+      "username": "sso-user",
+      "enabled": true,
+      "email": "user@switchbridge.local",
+      "firstName": "Alex",
+      "lastName": "Engineer",
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "viewer"
+      ]
+    }
+  ]
+}
