@@ -353,11 +353,20 @@ export function RoleMappingEditor({
                         <option value="operator">🛠️ OPERATOR (Bridges & Channels)</option>
                         <option value="viewer">👁️ VIEWER (Read-Only)</option>
                       </select>
-                      <div className="mapping-rule-perm-desc">
-                        {rule.switchbridgeRole === 'admin' && t.roleAdminDesc}
-                        {rule.switchbridgeRole === 'operator' && t.roleOperatorDesc}
-                        {rule.switchbridgeRole === 'viewer' && t.roleViewerDesc}
-                      </div>
+                      <button
+                        type="button"
+                        className="info-help-btn"
+                        onClick={() => setShowInfoModal(true)}
+                        title={
+                          rule.switchbridgeRole === 'admin'
+                            ? t.roleAdminDesc
+                            : rule.switchbridgeRole === 'operator'
+                            ? t.roleOperatorDesc
+                            : t.roleViewerDesc
+                        }
+                      >
+                        ?
+                      </button>
                     </div>
 
                     {/* Delete Rule */}

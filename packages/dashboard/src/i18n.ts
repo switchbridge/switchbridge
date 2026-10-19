@@ -43,8 +43,8 @@ export const translations = {
     // OIDC Role Mapping Canvas
     roleMappingTitle: 'РОЛИ_И_ПРАВА',
     roleMappingDescription: 'Наглядное сопоставление групп из корпоративного Identity Provider с ролями и правами Switchbridge. Без скрытой автоматики — применяется строго то, что настроено в таблице.',
-    roleMappingConfigureOption: '⚡ НАСТРОИТЬ СОПОСТАВЛЕНИЕ СЕЙЧАС',
-    roleMappingSkipOption: 'ОТЛОЖИТЬ НАСТРОЙКУ (СДЕЛАТЬ ПОЗЖЕ В НАСТРОЙКАХ)',
+    roleMappingConfigureOption: 'РУЧНОЕ СОПОСТАВЛЕНИЕ',
+    roleMappingSkipOption: 'НАСТРОИТЬ ПОЗЖЕ',
     roleMappingSkippedInfo: '✓ ОТЛОЖЕНО: Вы сможете настроить сопоставление в любое удобное время в панели администратора. До этого момента действует выбранная политика по умолчанию.',
     discoveredRolesLabel: '⚡ НАЙДЕННЫЕ В OIDC РОЛИ И ГРУППЫ:',
     discoveredRolesHint: 'Нажмите на роль, чтобы быстро добавить правило сопоставления',
@@ -222,8 +222,8 @@ export const translations = {
     // OIDC Role Mapping Canvas
     roleMappingTitle: 'ROLE_AND_RIGHTS',
     roleMappingDescription: 'Direct visual mapping of corporate Identity Provider groups to Switchbridge roles and rights. Zero hidden heuristics — strictly enforces what you configure.',
-    roleMappingConfigureOption: '⚡ CONFIGURE MAPPING NOW',
-    roleMappingSkipOption: 'CONFIGURE LATER IN SETTINGS',
+    roleMappingConfigureOption: 'MANUAL MAPPING',
+    roleMappingSkipOption: 'CONFIGURE LATER',
     roleMappingSkippedInfo: '✓ DEFERRED: You can configure role mapping anytime from the administration dashboard. Until then, the selected default policy applies.',
     discoveredRolesLabel: '⚡ DISCOVERED ROLES IN YOUR OIDC:',
     discoveredRolesHint: 'Click a role to quickly add a mapping rule',

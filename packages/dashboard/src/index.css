@@ -1544,11 +1544,13 @@ body,
 
 .mapping-select-wrapper {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 8px;
 }
 
 .mapping-rule-select {
+  flex: 1;
+  min-width: 0;
   width: 100%;
   padding: 8px 10px;
   background: var(--drifter-black);
